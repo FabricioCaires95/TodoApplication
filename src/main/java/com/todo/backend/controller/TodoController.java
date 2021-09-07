@@ -1,6 +1,7 @@
 package com.todo.backend.controller;
 
 import com.todo.backend.dto.TodoDto;
+import com.todo.backend.dto.TodoUpdateDto;
 import com.todo.backend.service.TodoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -8,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
@@ -40,7 +42,7 @@ public class TodoController {
 
   @PostMapping("/create")
   public ResponseEntity<TodoDto> createTodo(
-          @RequestBody TodoDto todoDto) {
+          @RequestBody @Valid TodoDto todoDto) {
     todoService.createTodo(todoDto);
     URI uri = ServletUriComponentsBuilder
             .fromCurrentRequest().path("/{id}")
@@ -48,5 +50,16 @@ public class TodoController {
     return ResponseEntity.created(uri).build();
   }
 
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> deleteTodo(@PathVariable Long id) {
+    todoService.deleteById(id);
+    return ResponseEntity.noContent().build();
+  }
+
+  @PutMapping("/update")
+  public ResponseEntity<TodoUpdateDto> update(@RequestBody @Valid TodoUpdateDto todoDto) {
+    todoService.update(todoDto);
+    return ResponseEntity.noContent().build();
+  }
 
 }
