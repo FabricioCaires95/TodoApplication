@@ -4,6 +4,8 @@ import com.todo.backend.domain.Todo;
 import com.todo.backend.dto.TodoDto;
 import org.mapstruct.Mapper;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface TodoMapper {
 
@@ -11,4 +13,5 @@ public interface TodoMapper {
 
   Todo convertToEntity(TodoDto dto);
 
+  List<TodoDto> returnDtoList(List<Todo> todo);
 }

@@ -1,10 +1,11 @@
 package com.todo.backend.dto;
 
-import java.io.Serializable;
-import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
+import java.time.LocalDateTime;
 
 
 @Data
@@ -12,6 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class TodoDto implements Serializable {
 
+  private Long id;
   private String title;
   private String description;
   private LocalDateTime deadline;
