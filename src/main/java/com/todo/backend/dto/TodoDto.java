@@ -27,7 +27,7 @@ public class TodoDto implements Serializable {
   private String description;
 
   @FutureOrPresent
-  @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
+  @JsonFormat(pattern = "dd/MM/yyyy")
   private LocalDate deadline;
   private Boolean status;
 }
