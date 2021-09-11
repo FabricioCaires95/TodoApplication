@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 
 @Data
@@ -28,6 +28,6 @@ public class TodoDto implements Serializable {
 
   @FutureOrPresent
   @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
-  private LocalDateTime deadline;
+  private LocalDate deadline;
   private Boolean status;
 }

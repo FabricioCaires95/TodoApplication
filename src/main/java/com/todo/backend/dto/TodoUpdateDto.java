@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
@@ -29,7 +29,7 @@ public class TodoUpdateDto {
 
     @FutureOrPresent
     @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
-    private LocalDateTime deadline;
+    private LocalDate deadline;
 
     private Boolean status;
 }

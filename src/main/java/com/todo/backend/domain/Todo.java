@@ -1,14 +1,15 @@
 package com.todo.backend.domain;
 
-import java.io.Serializable;
-import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.io.Serializable;
+import java.time.LocalDate;
 
 @Entity
 @NoArgsConstructor
@@ -21,7 +22,7 @@ public class Todo implements Serializable {
   private Long id;
   private String title;
   private String description;
-  private LocalDateTime deadline;
+  private LocalDate deadline;
   private Boolean status;
 
 }
