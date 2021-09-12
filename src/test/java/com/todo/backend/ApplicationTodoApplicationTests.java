@@ -1,10 +1,10 @@
 package com.todo.backend;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 
-@SpringBootTest
-class ApplicationTodoApplicationTests {
+@TodoSpringBootTest
+class ApplicationTodoApplicationTests extends AbstractTestNGSpringContextTests {
 
   @Test
   void contextLoads() {

@@ -1,42 +1,58 @@
 package com.todo.backend.controller;
 
-import com.todo.backend.dto.TodoDto;
 import com.todo.backend.service.TodoService;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.mock.web.MockServletContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
+import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 import static com.todo.backend.utils.TodoUtils.getTodoDto;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(SpringExtension.class)
-public class TodoControllerTest {
+@WebAppConfiguration
+@ContextConfiguration(classes = {MockServletContext.class})
+public class TodoControllerTest extends AbstractTestNGSpringContextTests {
 
-    @InjectMocks
-    private TodoController todoController;
+  @InjectMocks
+  private TodoController controller;
 
-    @Mock
-    private TodoService todoService;
+  @Mock
+  private TodoService todoService;
 
-    @Test
-    @DisplayName("Get a valid Todo by id")
-    public void returnTodoDtoByIdSuccessful() {
-        when(todoService.findById(anyLong())).thenReturn(getTodoDto());
+  @Autowired
+  private MockServletContext servletContext;
 
-        ResponseEntity<TodoDto> result = todoController.findById(anyLong());
+  protected MockMvc mvc;
 
-        assertNotNull(result);
-        assertNotNull(result.getBody());
-        assertThat(result.getBody().getTitle()).isEqualTo(getTodoDto().getTitle());
-        assertThat(result.getStatusCode().value()).isEqualTo(HttpStatus.OK.value());
-    }
+  protected HttpHeaders httpHeaders;
+
+  @BeforeMethod
+  public void beforeMethod() {
+    MockitoAnnotations.openMocks(this);
+    mvc = MockMvcBuilders.standaloneSetup(controller).build();
+  }
+
+  @Test
+  @DisplayName("get TodoDto by id sucessful")
+  public void testFindByIdSuccesful() throws Exception {
+    when(todoService.findById(anyLong())).thenReturn(getTodoDto());
+    mvc.perform(MockMvcRequestBuilders.get(
+        "/todo/{id}", 1L
+    )).andExpect(MockMvcResultMatchers.status().isOk());
+  }
+
 
 }
