@@ -20,22 +20,29 @@ public class DBService {
     Todo t1 = new Todo(null,
         "Study",
         "lerning English",
-            LocalDate.parse("01/09/2021", formatter),
-        false);
+            LocalDate.parse("15/09/2021", formatter),
+        true);
 
     Todo t2 = new Todo(null,
             "Play",
             "Play Soccer",
             LocalDate.parse("05/09/2021", formatter),
-            true);
+            false);
 
     Todo t3 = new Todo(null,
             "Eat",
             "Make Dinner",
-            LocalDate.parse("03/09/2021", formatter),
+            LocalDate.parse("13/09/2021", formatter),
+            true);
+
+    Todo t4 = new Todo(null,
+            "Task",
+            "Make Homework",
+            LocalDate.parse("12/09/2021", formatter),
             false);
 
-    todoRepository.saveAll(Arrays.asList(t1,t2,t3));
+
+    todoRepository.saveAll(Arrays.asList(t1,t2,t3,t4));
   }
 
 }

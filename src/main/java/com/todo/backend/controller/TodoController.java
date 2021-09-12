@@ -13,6 +13,7 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/todo")
 public class TodoController {
@@ -57,9 +58,8 @@ public class TodoController {
   }
 
   @PutMapping("/update")
-  public ResponseEntity<TodoUpdateDto> update(@RequestBody @Valid TodoUpdateDto todoDto) {
-    todoService.update(todoDto);
-    return ResponseEntity.noContent().build();
+  public ResponseEntity<TodoDto> update(@RequestBody @Valid TodoUpdateDto todoDto) {
+    return ResponseEntity.ok().body(todoService.update(todoDto));
   }
 
 }
