@@ -33,7 +33,7 @@ public class DBService {
             "Eat",
             "Make Dinner",
             LocalDate.parse("13/09/2021", formatter),
-            true);
+            false);
 
     Todo t4 = new Todo(null,
             "Task",
