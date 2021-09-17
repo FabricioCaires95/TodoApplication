@@ -4,6 +4,7 @@ import com.todo.backend.dto.TodoDto;
 import com.todo.backend.dto.TodoUpdateDto;
 import com.todo.backend.service.TodoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +12,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.List;
 
 @CrossOrigin
 @RestController
@@ -26,19 +26,13 @@ public class TodoController {
     return ResponseEntity.ok(todoService.findById(id));
   }
 
-  @GetMapping("/open")
-  public ResponseEntity<List<TodoDto>> findOpenTasks() {
-    return ResponseEntity.ok(todoService.findOpenTodo());
-  }
-
-  @GetMapping("/close")
-  public ResponseEntity<List<TodoDto>> findCloseTasks() {
-    return ResponseEntity.ok(todoService.findClosedTodo());
-  }
-
   @GetMapping("/all")
-  public ResponseEntity<List<TodoDto>> findAllTasks() {
-    return ResponseEntity.ok(todoService.findAllTodos());
+  public ResponseEntity<Page<TodoDto>> findAllTasksPageable(
+          @RequestParam(value = "page", defaultValue = "0") Integer page,
+          @RequestParam(value = "size", defaultValue = "3") Integer size,
+          @RequestParam(value = "isFinished", defaultValue = "false") Boolean isFinished
+  ) {
+    return ResponseEntity.ok(todoService.findAllDynamicParameters(page, size, isFinished));
   }
 
   @PostMapping("/create")
