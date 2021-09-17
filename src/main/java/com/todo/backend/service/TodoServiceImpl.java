@@ -7,9 +7,11 @@ import com.todo.backend.exception.NotFoundException;
 import com.todo.backend.mapper.TodoMapper;
 import com.todo.backend.repository.TodoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -30,21 +32,6 @@ public class TodoServiceImpl implements TodoService {
   }
 
   @Override
-  public List<TodoDto> findOpenTodo() {
-    return mapper.returnDtoList(todoRepository.findAllByStatusFalseOrderByDeadline());
-  }
-
-  @Override
-  public List<TodoDto> findClosedTodo() {
-    return mapper.returnDtoList(todoRepository.findAllByStatusTrueOrderByDeadline());
-  }
-
-  @Override
-  public List<TodoDto> findAllTodos() {
-    return mapper.returnDtoList(todoRepository.findAll());
-  }
-
-  @Override
   public void createTodo(TodoDto todoDto) {
     todoRepository.save(mapper.convertToEntity(todoDto));
   }
@@ -61,12 +48,19 @@ public class TodoServiceImpl implements TodoService {
       todo.get().setTitle(todoDto.getTitle());
       todo.get().setDescription(todoDto.getDescription());
       todo.get().setDeadline(todoDto.getDeadline());
-      todo.get().setStatus(todoDto.getStatus());
+      todo.get().setIsFinished(todoDto.getStatus());
       todoRepository.save(todo.get());
       return mapper.convertToDto(todo.get());
     } else {
       throw new NotFoundException("Todo not found");
     }
+  }
 
+  @Override
+  public Page<TodoDto> findAllDynamicParameters(Integer page, Integer size, boolean status) {
+    PageRequest request = PageRequest.of(page, size,  Sort.by("deadline").ascending());
+    return todoRepository
+            .findAllByIsFinished(request, status)
+            .map(mapper::convertToDto);
   }
 }
