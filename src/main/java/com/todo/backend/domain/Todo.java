@@ -1,6 +1,7 @@
 package com.todo.backend.domain;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -14,6 +15,7 @@ import java.time.LocalDate;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Data
 public class Todo implements Serializable {
 
@@ -23,6 +25,6 @@ public class Todo implements Serializable {
   private String title;
   private String description;
   private LocalDate deadline;
-  private Boolean status;
+  private Boolean isFinished;
 
 }

@@ -33,5 +33,6 @@ public class TodoDto implements Serializable {
   @JsonFormat(pattern = "dd/MM/yyyy")
   @ApiModelProperty(example = "25/09/2021")
   private LocalDate deadline;
-  private Boolean status;
+
+  private Boolean isFinished;
 }

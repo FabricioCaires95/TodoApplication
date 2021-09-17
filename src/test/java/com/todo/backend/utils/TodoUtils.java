@@ -16,7 +16,7 @@ public class TodoUtils {
                 .title("Learning")
                 .description("learning spring boot")
                 .deadline(LocalDate.now())
-                .status(false)
+                .isFinished(false)
                 .build();
     }
 
@@ -26,7 +26,7 @@ public class TodoUtils {
                 .title(null)
                 .description("learning spring boot")
                 .deadline(passDate)
-                .status(false)
+                .isFinished(false)
                 .build();
     }
 
@@ -36,7 +36,7 @@ public class TodoUtils {
                 .title("Learning")
                 .description("learning spring boot")
                 .deadline(passDate)
-                .status(false)
+                .isFinished(false)
                 .build();
     }
 
