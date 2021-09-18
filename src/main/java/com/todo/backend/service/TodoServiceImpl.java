@@ -48,7 +48,7 @@ public class TodoServiceImpl implements TodoService {
       todo.get().setTitle(todoDto.getTitle());
       todo.get().setDescription(todoDto.getDescription());
       todo.get().setDeadline(todoDto.getDeadline());
-      todo.get().setIsFinished(todoDto.getStatus());
+      todo.get().setIsFinished(todoDto.getIsFinished());
       todoRepository.save(todo.get());
       return mapper.convertToDto(todo.get());
     } else {
