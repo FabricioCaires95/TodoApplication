@@ -29,7 +29,7 @@ public class TodoDto implements Serializable {
   @ApiModelProperty(example = "Go to the Gym at least three times a week")
   private String description;
 
-  @FutureOrPresent(message = "Invalide date")
+  @FutureOrPresent
   @JsonFormat(pattern = "dd/MM/yyyy")
   @ApiModelProperty(example = "25/09/2021")
   private LocalDate deadline;

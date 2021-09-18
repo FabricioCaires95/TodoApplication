@@ -21,7 +21,7 @@ public class TodoUpdateDto {
     @NotNull(message = "ID is required")
     private Long id;
 
-    @NotEmpty(message = "name is required")
+    @NotEmpty(message = "title is required")
     private String title;
 
     @NotEmpty(message = "description is required")
@@ -31,5 +31,5 @@ public class TodoUpdateDto {
     @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate deadline;
 
-    private Boolean status;
+    private Boolean isFinished;
 }
