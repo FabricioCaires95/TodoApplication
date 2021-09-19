@@ -52,8 +52,8 @@ public class TodoController {
   }
 
   @PutMapping("/update")
-  public ResponseEntity<TodoDto> update(@RequestBody @Valid TodoUpdateDto todoDto) {
-    return ResponseEntity.ok().body(todoService.update(todoDto));
+  public ResponseEntity<TodoUpdateDto> update(@RequestBody @Valid TodoUpdateDto todoDto) {
+      return ResponseEntity.ok().body(todoService.update(todoDto));
   }
 
 }
