@@ -38,7 +38,7 @@ public class TodoServiceImplTest {
     }
 
     @Test
-    public void getTodoByIdSuccess() throws Exception {
+    public void getTodoByIdSuccess() {
         TodoDto t1 = getTodoDto();
         when(repository.findById(anyLong()))
                 .thenReturn(Optional.of(getTodoEntity()));
@@ -56,7 +56,7 @@ public class TodoServiceImplTest {
     }
 
     @Test(expectedExceptions = NotFoundException.class)
-    public void getNotFoundExceptionWhenFindById() throws Exception {
+    public void getNotFoundExceptionWhenFindById() {
         when(repository.findById(1L))
                 .thenReturn(Optional.of(getTodoEntity()));
         service.findById(2L);
@@ -79,7 +79,6 @@ public class TodoServiceImplTest {
         TodoUpdateDto updateDto = getUpdateTodoDtoWithComplet();
         Todo t1 = getTodoEntity();
         when(repository.findById(anyLong())).thenReturn(Optional.of(t1));
-        when(todoMapper.convertToUpdateDto(t1)).thenReturn(updateDto);
         updateDto = service.update(updateDto);
 
         assertNotNull(updateDto);
@@ -92,8 +91,7 @@ public class TodoServiceImplTest {
     @Test(expectedExceptions = NotFoundException.class)
     public void notFoundUpdateTask() {
         TodoUpdateDto updateDto = getUpdateTodoDtoWithComplet();
-        Todo t1 = getTodoEntity();
-        when(repository.findById(anyLong())).thenReturn(Optional.of(t1));
+        when(repository.findById(anyLong())).thenReturn(Optional.empty());
         service.update(updateDto);
     }
 

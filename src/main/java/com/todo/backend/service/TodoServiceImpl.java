@@ -40,8 +40,8 @@ public class TodoServiceImpl implements TodoService {
   @Override
   public TodoUpdateDto update(TodoUpdateDto todoDto) {
     return todoRepository.findById(todoDto.getId()).map(todo -> {
-      todoRepository.save(mapper.convertToEntity(mapper.fromUpdateDto(todoDto)));
-      return mapper.convertToUpdateDto(todo);
+      todoRepository.save(mapper.convertUpdateDtoToEntity(todoDto));
+      return todoDto;
     }).orElseThrow(() -> new NotFoundException("Todo not found"));
   }
 

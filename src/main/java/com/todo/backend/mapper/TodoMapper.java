@@ -12,8 +12,6 @@ public interface TodoMapper {
 
   Todo convertToEntity(TodoDto dto);
 
-  TodoDto fromUpdateDto(TodoUpdateDto todoUpdateDto);
-
-  TodoUpdateDto convertToUpdateDto(Todo todoUpdateDto);
+  Todo convertUpdateDtoToEntity(TodoUpdateDto todoUpdateDto);
 
 }
