@@ -12,7 +12,7 @@ public interface TodoService {
 
   void deleteById(Long id);
 
-  TodoDto update(TodoUpdateDto todoDto);
+  TodoUpdateDto update(TodoUpdateDto todoDto);
 
   Page<TodoDto> findAllDynamicParameters(Integer page, Integer size, boolean status);
 }

@@ -1,6 +1,5 @@
 package com.todo.backend.service;
 
-import com.todo.backend.domain.Todo;
 import com.todo.backend.dto.TodoDto;
 import com.todo.backend.dto.TodoUpdateDto;
 import com.todo.backend.exception.NotFoundException;
@@ -11,8 +10,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class TodoServiceImpl implements TodoService {
@@ -25,10 +22,9 @@ public class TodoServiceImpl implements TodoService {
 
   @Override
   public TodoDto findById(Long id) {
-    Optional<Todo> todo = todoRepository.findById(id);
-    return todo
-        .map(value -> mapper.convertToDto(value))
-        .orElseThrow(() -> new NotFoundException("Todo not found"));
+    return todoRepository.findById(id)
+            .map(todo -> mapper.convertToDto(todo))
+            .orElseThrow(() -> new NotFoundException("Todo not found"));
   }
 
   @Override
@@ -42,18 +38,11 @@ public class TodoServiceImpl implements TodoService {
   }
 
   @Override
-  public TodoDto update(TodoUpdateDto todoDto) {
-    Optional<Todo> todo = todoRepository.findById(todoDto.getId());
-    if (todo.isPresent()) {
-      todo.get().setTitle(todoDto.getTitle());
-      todo.get().setDescription(todoDto.getDescription());
-      todo.get().setDeadline(todoDto.getDeadline());
-      todo.get().setIsFinished(todoDto.getIsFinished());
-      todoRepository.save(todo.get());
-      return mapper.convertToDto(todo.get());
-    } else {
-      throw new NotFoundException("Todo not found");
-    }
+  public TodoUpdateDto update(TodoUpdateDto todoDto) {
+    return todoRepository.findById(todoDto.getId()).map(todo -> {
+      todoRepository.save(mapper.convertToEntity(mapper.fromUpdateDto(todoDto)));
+      return mapper.convertToUpdateDto(todo);
+    }).orElseThrow(() -> new NotFoundException("Todo not found"));
   }
 
   @Override
