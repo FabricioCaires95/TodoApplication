@@ -19,6 +19,8 @@ import java.time.LocalDate;
 @Data
 public class Todo implements Serializable {
 
+  public static final String CACHE_NAME = "todo";
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
