@@ -2,8 +2,8 @@ package com.todo.backend.service;
 
 import com.todo.backend.domain.Todo;
 import com.todo.backend.dto.TodoDto;
-import com.todo.backend.dto.TodoUpdateDto;
 import com.todo.backend.exception.NotFoundException;
+import com.todo.backend.exception.UnprocessableEntityException;
 import com.todo.backend.mapper.TodoMapper;
 import com.todo.backend.repository.TodoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +14,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import static java.util.Objects.isNull;
+
 
 @Service
 public class TodoServiceImpl implements TodoService {
@@ -45,12 +48,16 @@ public class TodoServiceImpl implements TodoService {
   }
 
   @Override
-  @CachePut(cacheNames = {Todo.CACHE_NAME, TodoUpdateDto.CACHE_NAME}, key = "#todoDto.id")
-  public TodoUpdateDto update(TodoUpdateDto todoDto) {
-    return todoRepository.findById(todoDto.getId()).map(todo -> {
-      todoRepository.save(mapper.convertUpdateDtoToEntity(todoDto));
+  @CachePut(cacheNames = Todo.CACHE_NAME, key = "#todoDto.getId()")
+  public TodoDto update(TodoDto todoDto) {
+    if (isNull(todoDto.getId())){
+      throw new UnprocessableEntityException("ID field is required to do this operation !");
+    }
+
+    return todoRepository.findById(todoDto.getId()).map(t1 -> {
+      todoRepository.save(mapper.convertToEntity(todoDto));
       return todoDto;
-    }).orElseThrow(() -> new NotFoundException("Todo not found"));
+    }).orElseThrow(() -> new NotFoundException("Todo Not Found !"));
   }
 
   @Override

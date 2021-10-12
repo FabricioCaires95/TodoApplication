@@ -1,7 +1,6 @@
 package com.todo.backend.controller;
 
 import com.todo.backend.dto.TodoDto;
-import com.todo.backend.dto.TodoUpdateDto;
 import com.todo.backend.service.TodoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -52,7 +51,7 @@ public class TodoController {
   }
 
   @PutMapping("/update")
-  public ResponseEntity<TodoUpdateDto> update(@RequestBody @Valid TodoUpdateDto todoDto) {
+  public ResponseEntity<TodoDto> update(@RequestBody @Valid TodoDto todoDto) {
       return ResponseEntity.ok().body(todoService.update(todoDto));
   }
 

@@ -1,7 +1,6 @@
 package com.todo.backend.service;
 
 import com.todo.backend.dto.TodoDto;
-import com.todo.backend.dto.TodoUpdateDto;
 import org.springframework.data.domain.Page;
 
 public interface TodoService {
@@ -12,7 +11,7 @@ public interface TodoService {
 
   void deleteById(Long id);
 
-  TodoUpdateDto update(TodoUpdateDto todoDto);
+  TodoDto update(TodoDto todoDto);
 
   Page<TodoDto> findAllDynamicParameters(Integer page, Integer size, boolean status);
 }
