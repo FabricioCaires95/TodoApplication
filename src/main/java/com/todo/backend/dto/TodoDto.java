@@ -21,7 +21,7 @@ public class TodoDto implements Serializable {
 
   private Long id;
 
-  @NotEmpty(message = "name is required")
+  @NotEmpty(message = "title is required")
   @ApiModelProperty(example = "Go to Gym")
   private String title;
 
