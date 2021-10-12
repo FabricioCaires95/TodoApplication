@@ -19,10 +19,21 @@ public class RestExceptionHandler {
             return new ResponseEntity<>(
                     StandartError.builder()
                             .timestamp(LocalDateTime.now())
-                            .message("Todo Not Found")
+                            .message(ex.getMessage())
                             .cause(ex.getClass().getName())
                             .statusCode(HttpStatus.NOT_FOUND.value())
                             .build(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(UnprocessableEntityException.class)
+    public ResponseEntity<StandartError> handleNotUnprocessableException(UnprocessableEntityException ex) {
+        return new ResponseEntity<>(
+                StandartError.builder()
+                        .timestamp(LocalDateTime.now())
+                        .message(ex.getMessage())
+                        .cause(ex.getClass().getName())
+                        .statusCode(HttpStatus.UNPROCESSABLE_ENTITY.value())
+                        .build(), HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
