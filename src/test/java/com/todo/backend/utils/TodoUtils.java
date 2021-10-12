@@ -38,6 +38,16 @@ public class TodoUtils {
                 .build();
     }
 
+    public static TodoDto getTodoDtoToUpdate(){
+        return TodoDto.builder()
+                .id(2L)
+                .title("Make something 2")
+                .description("describe the task 2")
+                .deadline(LocalDate.now().plusDays(3))
+                .isFinished(true)
+                .build();
+    }
+
     public static TodoDto getTodoDtoWithDatePass() {
         return TodoDto.builder()
                 .id(1L)
@@ -60,6 +70,16 @@ public class TodoUtils {
 
     public static TodoUpdateDto getUpdateTodoDtoWithInvalidArguments() {
         return TodoUpdateDto.builder()
+                .id(1L)
+                .title("")
+                .description("")
+                .deadline(passDate)
+                .isFinished(false)
+                .build();
+    }
+
+    public static TodoDto getTodoDtoWithInvalidArguments() {
+        return TodoDto.builder()
                 .id(null)
                 .title("")
                 .description("")

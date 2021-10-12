@@ -92,7 +92,7 @@ public class TodoControllerTest extends AbstractTestNGSpringContextTests {
             .andExpect(result -> assertTrue(result.getResolvedException() instanceof MethodArgumentNotValidException))
             .andExpect(jsonPath("$.message").value("Validation Error"))
             .andExpect(jsonPath("$.errors.['deadline']").value("must be a date in the present or in the future"))
-            .andExpect(jsonPath("$.errors.['title']").value("name is required"));
+            .andExpect(jsonPath("$.errors.['title']").value("title is required"));
   }
 
   @Test
@@ -111,8 +111,7 @@ public class TodoControllerTest extends AbstractTestNGSpringContextTests {
     mvc.perform(put(
                     "/todo/update")
                     .contentType(APPLICATION_JSON)
-                    .content(mapper.writeValueAsString(getUpdateTodoDtoWithInvalidArguments())))
-            .andExpect(jsonPath("$.errors['id']").value("ID is required"))
+                    .content(mapper.writeValueAsString(getTodoDtoWithInvalidArguments())))
             .andExpect(jsonPath("$.errors['title']").value("title is required"))
             .andExpect(jsonPath("$.errors['description']").value("description is required"))
             .andExpect(jsonPath("$.errors['deadline']").value("must be a date in the present or in the future"))

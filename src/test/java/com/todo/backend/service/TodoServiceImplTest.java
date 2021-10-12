@@ -2,8 +2,8 @@ package com.todo.backend.service;
 
 import com.todo.backend.domain.Todo;
 import com.todo.backend.dto.TodoDto;
-import com.todo.backend.dto.TodoUpdateDto;
 import com.todo.backend.exception.NotFoundException;
+import com.todo.backend.exception.UnprocessableEntityException;
 import com.todo.backend.mapper.TodoMapper;
 import com.todo.backend.repository.TodoRepository;
 import org.mockito.InjectMocks;
@@ -75,22 +75,31 @@ public class TodoServiceImplTest {
     }
 
     @Test
-    public void updateTaskSuccessful() {
-        TodoUpdateDto updateDto = getUpdateTodoDtoWithComplet();
+    public void shouldUpdateTaskSuccessful() {
+        TodoDto todoDto = getTodoDtoToUpdate();
+
         Todo t1 = getTodoEntity();
         when(repository.findById(anyLong())).thenReturn(Optional.of(t1));
-        updateDto = service.update(updateDto);
+        todoDto = service.update(todoDto);
 
-        assertNotNull(updateDto);
-        assertNotEquals(updateDto.getTitle(), t1.getTitle());
-        assertNotEquals(updateDto.getDescription(), t1.getDescription());
-        assertNotEquals(updateDto.getDeadline(), t1.getDeadline());
-        assertNotEquals(updateDto.getIsFinished(), t1.getIsFinished());
+        assertNotNull(todoDto);
+        assertNotEquals(todoDto.getTitle(), t1.getTitle());
+        assertNotEquals(todoDto.getDescription(), t1.getDescription());
+        assertNotEquals(todoDto.getDeadline(), t1.getDeadline());
+        assertNotEquals(todoDto.getIsFinished(), t1.getIsFinished());
+    }
+
+    @Test(expectedExceptions = UnprocessableEntityException.class)
+    public void returnErrorWhenPassingNullId() {
+        TodoDto todoDto = TodoDto.builder()
+                .id(null)
+                .build();
+        service.update(todoDto);
     }
 
     @Test(expectedExceptions = NotFoundException.class)
     public void notFoundUpdateTask() {
-        TodoUpdateDto updateDto = getUpdateTodoDtoWithComplet();
+        TodoDto updateDto = getTodoDto();
         when(repository.findById(anyLong())).thenReturn(Optional.empty());
         service.update(updateDto);
     }
