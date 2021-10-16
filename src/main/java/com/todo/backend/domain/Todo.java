@@ -1,6 +1,10 @@
 package com.todo.backend.domain;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -27,4 +31,24 @@ public class Todo implements Serializable {
   private LocalDate deadline;
   private Boolean isFinished;
 
+  @Override
+  public int hashCode() {
+    return super.hashCode();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return super.equals(obj);
+  }
+
+  @Override
+  public String toString() {
+    return "Todo{" +
+            "id=" + id +
+            ", title='" + title + '\'' +
+            ", description='" + description + '\'' +
+            ", deadline=" + deadline +
+            ", isFinished=" + isFinished +
+            '}';
+  }
 }
