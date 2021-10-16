@@ -20,13 +20,23 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import static com.todo.backend.utils.TodoUtils.*;
+import static com.todo.backend.utils.TodoUtils.getTodoDto;
+import static com.todo.backend.utils.TodoUtils.getTodoDtoWithDatePass;
+import static com.todo.backend.utils.TodoUtils.getUpdateTodoDtoWithComplet;
+import static com.todo.backend.utils.TodoUtils.getUpdateTodoDtoWithInvalidArguments;
+import static com.todo.backend.utils.TodoUtils.returnDefaultPageable;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyBoolean;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -111,7 +121,8 @@ public class TodoControllerTest extends AbstractTestNGSpringContextTests {
     mvc.perform(put(
                     "/todo/update")
                     .contentType(APPLICATION_JSON)
-                    .content(mapper.writeValueAsString(getTodoDtoWithInvalidArguments())))
+                    .content(mapper.writeValueAsString(getUpdateTodoDtoWithInvalidArguments())))
+            .andExpect(jsonPath("$.errors['id']").value("ID is required"))
             .andExpect(jsonPath("$.errors['title']").value("title is required"))
             .andExpect(jsonPath("$.errors['description']").value("description is required"))
             .andExpect(jsonPath("$.errors['deadline']").value("must be a date in the present or in the future"))

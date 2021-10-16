@@ -2,8 +2,8 @@ package com.todo.backend.service;
 
 import com.todo.backend.domain.Todo;
 import com.todo.backend.dto.TodoDto;
+import com.todo.backend.dto.TodoUpdateDto;
 import com.todo.backend.exception.NotFoundException;
-import com.todo.backend.exception.UnprocessableEntityException;
 import com.todo.backend.mapper.TodoMapper;
 import com.todo.backend.repository.TodoRepository;
 import org.mockito.InjectMocks;
@@ -15,11 +15,19 @@ import org.testng.annotations.Test;
 
 import java.util.Optional;
 
-import static com.todo.backend.utils.TodoUtils.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static com.todo.backend.utils.TodoUtils.getTodoDto;
+import static com.todo.backend.utils.TodoUtils.getTodoEntity;
+import static com.todo.backend.utils.TodoUtils.getUpdateTodoDtoWithComplet;
+import static com.todo.backend.utils.TodoUtils.returnEntityDefaultPageable;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyBoolean;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class TodoServiceImplTest {
 
@@ -75,31 +83,25 @@ public class TodoServiceImplTest {
     }
 
     @Test
-    public void shouldUpdateTaskSuccessful() {
-        TodoDto todoDto = getTodoDtoToUpdate();
-
+    public void updateTaskSuccessful() {
+        TodoUpdateDto updateDto = getUpdateTodoDtoWithComplet();
         Todo t1 = getTodoEntity();
-        when(repository.findById(anyLong())).thenReturn(Optional.of(t1));
-        todoDto = service.update(todoDto);
+        TodoDto dto = new TodoDto();
+        when(repository.findById(t1.getId())).thenReturn(Optional.of(t1));
+        when(todoMapper.convertUpdateDtoToEntity(any())).thenReturn(t1);
+        when(todoMapper.convertToDto(any())).thenReturn(dto);
+        dto = service.update(updateDto);
 
-        assertNotNull(todoDto);
-        assertNotEquals(todoDto.getTitle(), t1.getTitle());
-        assertNotEquals(todoDto.getDescription(), t1.getDescription());
-        assertNotEquals(todoDto.getDeadline(), t1.getDeadline());
-        assertNotEquals(todoDto.getIsFinished(), t1.getIsFinished());
-    }
-
-    @Test(expectedExceptions = UnprocessableEntityException.class)
-    public void returnErrorWhenPassingNullId() {
-        TodoDto todoDto = TodoDto.builder()
-                .id(null)
-                .build();
-        service.update(todoDto);
+        assertNotNull(dto);
+        assertNotEquals(updateDto.getTitle(), t1.getTitle());
+        assertNotEquals(updateDto.getDescription(), t1.getDescription());
+        assertNotEquals(updateDto.getDeadline(), t1.getDeadline());
+        assertNotEquals(updateDto.getIsFinished(), t1.getIsFinished());
     }
 
     @Test(expectedExceptions = NotFoundException.class)
     public void notFoundUpdateTask() {
-        TodoDto updateDto = getTodoDto();
+        TodoUpdateDto updateDto = getUpdateTodoDtoWithComplet();
         when(repository.findById(anyLong())).thenReturn(Optional.empty());
         service.update(updateDto);
     }

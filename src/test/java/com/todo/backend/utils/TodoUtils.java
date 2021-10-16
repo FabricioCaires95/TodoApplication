@@ -70,7 +70,7 @@ public class TodoUtils {
 
     public static TodoUpdateDto getUpdateTodoDtoWithInvalidArguments() {
         return TodoUpdateDto.builder()
-                .id(1L)
+                .id(null)
                 .title("")
                 .description("")
                 .deadline(passDate)
