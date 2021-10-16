@@ -2,8 +2,8 @@ package com.todo.backend.service;
 
 import com.todo.backend.domain.Todo;
 import com.todo.backend.dto.TodoDto;
+import com.todo.backend.dto.TodoUpdateDto;
 import com.todo.backend.exception.NotFoundException;
-import com.todo.backend.exception.UnprocessableEntityException;
 import com.todo.backend.mapper.TodoMapper;
 import com.todo.backend.repository.TodoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,57 +15,50 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import static java.util.Objects.isNull;
-
 
 @Service
 public class TodoServiceImpl implements TodoService {
 
-  @Autowired
-  private TodoRepository todoRepository;
+    @Autowired
+    private TodoRepository todoRepository;
 
-  @Autowired
-  private TodoMapper mapper;
+    @Autowired
+    private TodoMapper mapper;
 
-  @Override
-  @Cacheable(cacheNames = Todo.CACHE_NAME, key="#id")
-  public TodoDto findById(Long id) {
-    return todoRepository.findById(id)
-            .map(todo -> mapper.convertToDto(todo))
-            .orElseThrow(() -> new NotFoundException("Todo not found"));
-  }
-
-  @Override
-  @CacheEvict(cacheNames = Todo.CACHE_NAME, allEntries = true)
-  public void createTodo(TodoDto todoDto) {
-    todoRepository.save(mapper.convertToEntity(todoDto));
-  }
-
-  @Override
-  @CacheEvict(cacheNames = Todo.CACHE_NAME, key = "#id")
-  public void deleteById(Long id) {
-    todoRepository.deleteById(id);
-  }
-
-  @Override
-  @CachePut(cacheNames = Todo.CACHE_NAME, key = "#todoDto.getId()")
-  public TodoDto update(TodoDto todoDto) {
-    if (isNull(todoDto.getId())){
-      throw new UnprocessableEntityException("ID field is required to do this operation !");
+    @Override
+    @Cacheable(cacheNames = Todo.CACHE_NAME, key = "#id")
+    public TodoDto findById(Long id) {
+        return todoRepository.findById(id)
+                .map(todo -> mapper.convertToDto(todo))
+                .orElseThrow(() -> new NotFoundException("Todo not found"));
     }
 
-    return todoRepository.findById(todoDto.getId()).map(t1 -> {
-      todoRepository.save(mapper.convertToEntity(todoDto));
-      return todoDto;
-    }).orElseThrow(() -> new NotFoundException("Todo Not Found !"));
-  }
+    @Override
+    @CacheEvict(cacheNames = Todo.CACHE_NAME, allEntries = true)
+    public void createTodo(TodoDto todoDto) {
+        todoRepository.save(mapper.convertToEntity(todoDto));
+    }
 
-  @Override
-  @Cacheable(cacheNames = Todo.CACHE_NAME, key = "#root.method.name")
-  public Page<TodoDto> findAllDynamicParameters(Integer page, Integer size, boolean status) {
-    PageRequest request = PageRequest.of(page, size,  Sort.by("deadline").ascending());
-    return todoRepository
-            .findAllByIsFinished(request, status)
-            .map(mapper::convertToDto);
-  }
+    @Override
+    @CacheEvict(cacheNames = Todo.CACHE_NAME, key = "#id")
+    public void deleteById(Long id) {
+        todoRepository.deleteById(id);
+    }
+
+    @Override
+    @CachePut(cacheNames = Todo.CACHE_NAME, key = "#todoDto.getId()")
+    public TodoDto update(TodoUpdateDto todoDto) {
+        return todoRepository.findById(todoDto.getId()).map(todo -> mapper.
+                convertToDto(todoRepository.save(
+                        mapper.convertUpdateDtoToEntity(todoDto)))).orElseThrow(() -> new NotFoundException("Todo Not Found !"));
+    }
+
+    @Override
+    @Cacheable(cacheNames = Todo.CACHE_NAME, key = "#root.method.name")
+    public Page<TodoDto> findAllDynamicParameters(Integer page, Integer size, boolean status) {
+        PageRequest request = PageRequest.of(page, size, Sort.by("deadline").ascending());
+        return todoRepository
+                .findAllByIsFinished(request, status)
+                .map(mapper::convertToDto);
+    }
 }
