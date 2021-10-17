@@ -21,6 +21,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.List;
 
 @CrossOrigin
 @RestController
@@ -41,7 +42,12 @@ public class TodoController {
           @RequestParam(value = "size", defaultValue = "3") Integer size,
           @RequestParam(value = "isFinished", defaultValue = "false") Boolean isFinished
   ) {
-    return ResponseEntity.ok(todoService.findAllDynamicParameters(page, size, isFinished));
+    return ResponseEntity.ok(todoService.findAllByDynamicParameters(page, size, isFinished));
+  }
+
+  @GetMapping(value = "/todos", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<List<TodoDto>> findAll() {
+    return ResponseEntity.ok(todoService.findAll());
   }
 
   @PostMapping("/create")
