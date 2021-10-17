@@ -13,8 +13,11 @@ import org.springframework.data.domain.Page;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.util.List;
 import java.util.Optional;
 
+import static com.todo.backend.utils.TodoUtils.getFinishListTasks;
+import static com.todo.backend.utils.TodoUtils.getTodo;
 import static com.todo.backend.utils.TodoUtils.getTodoDto;
 import static com.todo.backend.utils.TodoUtils.getTodoEntity;
 import static com.todo.backend.utils.TodoUtils.getUpdateTodoDtoWithComplet;
@@ -68,18 +71,21 @@ public class TodoServiceImplTest {
         when(repository.findById(1L))
                 .thenReturn(Optional.of(getTodoEntity()));
         service.findById(2L);
+        verify(repository, times(1)).findById(anyLong());
     }
 
     @Test
     public void createNewTaskSuccessful() {
         when(repository.save(any())).thenReturn(getTodoEntity());
         service.createTodo(getTodoDto());
+        verify(repository, times(1)).save(any());
     }
 
     @Test
     public void deleteTaskSuccessful() {
         when(repository.save(any())).thenReturn(getTodoEntity());
         service.deleteById(anyLong());
+        verify(repository, times(1)).deleteById(anyLong());
     }
 
     @Test
@@ -97,6 +103,7 @@ public class TodoServiceImplTest {
         assertNotEquals(updateDto.getDescription(), t1.getDescription());
         assertNotEquals(updateDto.getDeadline(), t1.getDeadline());
         assertNotEquals(updateDto.getIsFinished(), t1.getIsFinished());
+        verify(repository, times(1)).findById(anyLong());
     }
 
     @Test(expectedExceptions = NotFoundException.class)
@@ -104,6 +111,7 @@ public class TodoServiceImplTest {
         TodoUpdateDto updateDto = getUpdateTodoDtoWithComplet();
         when(repository.findById(anyLong())).thenReturn(Optional.empty());
         service.update(updateDto);
+        verify(repository, times(1)).findById(anyLong());
     }
 
     @Test
@@ -111,12 +119,29 @@ public class TodoServiceImplTest {
         Page<Todo> todoPage1 = returnEntityDefaultPageable();
         when(repository.findAllByIsFinished(any(), anyBoolean())).thenReturn(todoPage1);
 
-        Page<TodoDto> dtoPage = service.findAllDynamicParameters(0, 2, false);
+        Page<TodoDto> dtoPage = service.findAllByDynamicParameters(0, 2, false);
 
         assertNotNull(dtoPage);
         assertEquals(dtoPage.getContent().size(), 2);
+        verify(repository, times(1)).findAllByIsFinished(any(), anyBoolean());
 
     }
 
+    @Test
+    public void getAllTasksWithoutPageable() {
+        List<Todo> todoList = getTodo();
+        List<TodoDto> todoDtos = getFinishListTasks();
 
+        when(repository.findAll()).thenReturn(todoList);
+        when(todoMapper.convertList(todoList)).thenReturn(todoDtos);
+
+        todoDtos = service.findAll();
+
+        assertEquals(todoDtos.size(), 2);
+        assertEquals(todoDtos.get(0).getDescription(), "describe the task");
+        assertEquals(todoDtos.get(0).getId(), 1L);
+        assertEquals(todoDtos.get(1).getId(), 2L);
+        assertEquals(todoDtos.get(1).getDescription(), "describe the task 2");
+        verify(repository, times(1)).findAll();
+    }
 }
