@@ -4,6 +4,8 @@ import com.todo.backend.dto.TodoDto;
 import com.todo.backend.dto.TodoUpdateDto;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
+
 public interface TodoService {
 
   TodoDto findById(Long id);
@@ -14,5 +16,7 @@ public interface TodoService {
 
   TodoDto update(TodoUpdateDto todoDto);
 
-  Page<TodoDto> findAllDynamicParameters(Integer page, Integer size, boolean status);
+  Page<TodoDto> findAllByDynamicParameters(Integer page, Integer size, boolean status);
+
+  List<TodoDto> findAll();
 }

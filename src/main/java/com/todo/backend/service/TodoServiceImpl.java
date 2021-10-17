@@ -6,17 +6,20 @@ import com.todo.backend.dto.TodoUpdateDto;
 import com.todo.backend.exception.NotFoundException;
 import com.todo.backend.mapper.TodoMapper;
 import com.todo.backend.repository.TodoRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 @Service
+@Slf4j
 public class TodoServiceImpl implements TodoService {
 
     @Autowired
@@ -40,13 +43,13 @@ public class TodoServiceImpl implements TodoService {
     }
 
     @Override
-    @CacheEvict(cacheNames = Todo.CACHE_NAME, key = "#id")
+    @CacheEvict(cacheNames = Todo.CACHE_NAME, allEntries = true)
     public void deleteById(Long id) {
         todoRepository.deleteById(id);
     }
 
     @Override
-    @CachePut(cacheNames = Todo.CACHE_NAME, key = "#todoDto.getId()")
+    @CacheEvict(cacheNames = Todo.CACHE_NAME, allEntries = true)
     public TodoDto update(TodoUpdateDto todoDto) {
         return todoRepository.findById(todoDto.getId()).map(todo -> mapper.
                 convertToDto(todoRepository.save(
@@ -54,11 +57,17 @@ public class TodoServiceImpl implements TodoService {
     }
 
     @Override
-    @Cacheable(cacheNames = Todo.CACHE_NAME, key = "#root.method.name")
-    public Page<TodoDto> findAllDynamicParameters(Integer page, Integer size, boolean status) {
+    @Cacheable(cacheNames = Todo.CACHE_NAME)
+    public Page<TodoDto> findAllByDynamicParameters(Integer page, Integer size, boolean status) {
         PageRequest request = PageRequest.of(page, size, Sort.by("deadline").ascending());
         return todoRepository
                 .findAllByIsFinished(request, status)
                 .map(mapper::convertToDto);
+    }
+
+    @Override
+    @Cacheable(cacheNames = Todo.CACHE_NAME)
+    public List<TodoDto> findAll() {
+        return mapper.convertList(todoRepository.findAll());
     }
 }
