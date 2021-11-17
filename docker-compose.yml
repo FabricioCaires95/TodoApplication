@@ -1,0 +1,50 @@
+version: '3.1'
+services:
+  mysqldb:
+    image: mysql
+    container_name: mysql_container
+    env_file:
+      - ./.env
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+    ports:
+      - "3306:3306"
+    volumes:
+      - todo_data:/var/lib/mysql
+
+  redis:
+    image: redis
+    env_file:
+      - ./.env
+    container_name: redis_container
+    hostname: redis
+    ports:
+      - "6379:6379"
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL
+    volumes:
+      - ./redis:/data
+
+  backend:
+    image: todo-backend:1.0
+    depends_on:
+      - mysqldb
+      - redis
+    build:
+      context: .
+    container_name: backend
+    env_file:
+      - ./.env
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:3306/${DB_NAME}?useSSL=false&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: ${DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      SPRING_PROFILES_ACTIVE: test
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+volumes:
+  todo_data:
