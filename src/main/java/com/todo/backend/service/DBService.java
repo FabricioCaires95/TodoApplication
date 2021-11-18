@@ -1,7 +1,9 @@
 package com.todo.backend.service;
 
 import com.todo.backend.domain.Todo;
+import com.todo.backend.domain.User;
 import com.todo.backend.repository.TodoRepository;
+import com.todo.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,34 +17,28 @@ public class DBService {
   @Autowired
   private TodoRepository todoRepository;
 
+  @Autowired
+  private UserRepository userRepository;
+
   public void instanceDatabase() {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    User user = new User(
+            1L, "legend", "legend22@gmail.com", null);
+
     Todo t1 = new Todo(null,
         "Study",
         "lerning English",
             LocalDate.parse("15/09/2021", formatter),
-        true);
+        true, user);
 
     Todo t2 = new Todo(null,
             "Play",
             "Play Soccer",
             LocalDate.parse("05/09/2021", formatter),
-            false);
+            false, user);
 
-    Todo t3 = new Todo(null,
-            "Eat",
-            "Make Dinner",
-            LocalDate.parse("13/09/2021", formatter),
-            false);
-
-    Todo t4 = new Todo(null,
-            "Task",
-            "Make Homework",
-            LocalDate.parse("12/09/2021", formatter),
-            false);
-
-
-    todoRepository.saveAll(Arrays.asList(t1,t2,t3,t4));
+    userRepository.save(user);
+    todoRepository.saveAll(Arrays.asList(t1,t2));
   }
 
 }
