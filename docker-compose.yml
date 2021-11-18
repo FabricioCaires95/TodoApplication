@@ -28,7 +28,7 @@ services:
       - ./redis:/data
 
   backend:
-    image: todo-backend:1.0
+    image: fabriciocsv/todo-backend:1.0-SNAPSHOT
     depends_on:
       - mysqldb
       - redis
