@@ -28,6 +28,7 @@ public class User implements Serializable {
     private Long id;
     private String name;
     private String email;
+    private String password;
 
     @OneToMany(mappedBy = "user")
     private Set<Todo> tasks = new HashSet<>();

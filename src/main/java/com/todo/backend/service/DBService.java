@@ -23,7 +23,7 @@ public class DBService {
   public void instanceDatabase() {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     User user = new User(
-            1L, "legend", "legend22@gmail.com", null);
+            1L, "legend","legend22@gmail.com", "23131eqw", null);
 
     Todo t1 = new Todo(null,
         "Study",
