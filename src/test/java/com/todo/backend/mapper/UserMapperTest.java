@@ -23,5 +23,4 @@ public class UserMapperTest {
         assertEquals(user.getPassword(), userDto.getPassword());
     }
 
-
 }
