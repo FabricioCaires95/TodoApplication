@@ -2,11 +2,7 @@
 Simple Todo Application To create tasks
 
 
-<img
-src=“img/sb.png”
-raw=true
-style=“margin-right: 11px;”
-/>
+<img src="img/sb.png">
 
 Under development
 
