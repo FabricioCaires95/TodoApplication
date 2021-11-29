@@ -1,5 +1,6 @@
 package com.todo.backend.dto;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -37,4 +38,7 @@ public class TodoDto implements Serializable {
   private LocalDate deadline;
 
   private Boolean isFinished;
+
+  @JsonBackReference
+  private UserDto user;
 }
