@@ -2,6 +2,7 @@ package com.todo.backend.service;
 
 import com.todo.backend.dto.UserDto;
 import com.todo.backend.exception.NotFoundException;
+import com.todo.backend.mapper.CycleAvoidingMappingContext;
 import com.todo.backend.mapper.UserMapper;
 import com.todo.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,22 +19,25 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired
+    private CycleAvoidingMappingContext avoidingMappingContext;
+
     @Override
     public void createUser(UserDto userDto) {
-        userRepository.save(userMapper.dtoToEntity(userDto));
+        userRepository.save(userMapper.mapToEntity(userDto, avoidingMappingContext));
     }
 
     @Override
-    public UserDto findUserById(Long id) {
+    public UserDto findUserById(Long id) {;
         return userRepository.findById(id)
-                .map(userEntity -> userMapper.entityToDto(userEntity))
+                .map(userEntity -> userMapper.mapToDto(userEntity, avoidingMappingContext))
                 .orElseThrow(() -> new NotFoundException(DEFAULT_NOT_FOUND_MSG));
     }
 
     @Override
     public UserDto findUserByEmail(String email) {
         return userRepository.findByEmail(email)
-                .map(user -> userMapper.entityToDto(user))
+                .map(user -> userMapper.mapToDto(user, avoidingMappingContext))
                 .orElseThrow(() -> new NotFoundException(DEFAULT_NOT_FOUND_MSG));
     }
 }

@@ -1,6 +1,7 @@
 package com.todo.backend.service;
 
 import com.todo.backend.dto.UserDto;
+import com.todo.backend.mapper.CycleAvoidingMappingContext;
 import com.todo.backend.mapper.UserMapper;
 import com.todo.backend.repository.UserRepository;
 import org.mockito.InjectMocks;
@@ -34,6 +35,9 @@ public class UserServiceImplTest {
     @Mock
     private UserMapper userMapper;
 
+    @Mock
+    private CycleAvoidingMappingContext avoidingMappingContext;
+
     @BeforeMethod
     public void setup() {
         MockitoAnnotations.openMocks(this);
@@ -42,7 +46,7 @@ public class UserServiceImplTest {
     @Test
     public void createUserSucessful() {
         when(userRepository.save(any())).thenReturn(getUserEntity());
-        when(userMapper.dtoToEntity(getUserDto())).thenReturn(getUserEntity());
+        when(userMapper.mapToEntity(getUserDto(), avoidingMappingContext)).thenReturn(getUserEntity());
         userService.createUser(getUserDto());
         verify(userRepository, times(1)).save(any());
     }
@@ -50,7 +54,7 @@ public class UserServiceImplTest {
     @Test
     public void getUserByIdSuccess() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(getUserEntity()));
-        when(userMapper.entityToDto(any())).thenReturn(getUserDto());
+        when(userMapper.mapToDto(any(), any())).thenReturn(getUserDto());
         UserDto userDto = userService.findUserById(anyLong());
         assertNotNull(userDto);
         assertEquals(userDto.getEmail(), "legend123@gmail.com");
@@ -62,7 +66,7 @@ public class UserServiceImplTest {
     @Test
     public void getUserByEmailSuccess() {
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(getUserEntity()));
-        when(userMapper.entityToDto(any())).thenReturn(getUserDto());
+        when(userMapper.mapToDto(any(), any())).thenReturn(getUserDto());
         UserDto userDto = userService.findUserByEmail(anyString());
         assertNotNull(userDto);
         assertEquals(userDto.getEmail(), "legend123@gmail.com");
