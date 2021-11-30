@@ -45,9 +45,9 @@ public class TodoController {
     return ResponseEntity.ok(todoService.findAllByDynamicParameters(page, size, isFinished));
   }
 
-  @GetMapping(value = "/todos", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<List<TodoDto>> findAll() {
-    return ResponseEntity.ok(todoService.findAll());
+  @GetMapping(value = "/todosByUserId/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<List<TodoDto>> findAll(@PathVariable Long id) {
+    return ResponseEntity.ok(todoService.getTodosByUserId(id));
   }
 
   @PostMapping("/create")

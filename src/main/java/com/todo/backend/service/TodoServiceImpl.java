@@ -70,4 +70,9 @@ public class TodoServiceImpl implements TodoService {
     public List<TodoDto> findAll() {
         return mapper.convertList(todoRepository.findAll());
     }
+
+    @Override
+    public List<TodoDto> getTodosByUserId(Long userId) {
+        return mapper.convertList(todoRepository.getTodosByUserIdAndIsFinished(userId, false));
+    }
 }

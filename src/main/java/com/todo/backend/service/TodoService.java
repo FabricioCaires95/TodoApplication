@@ -19,4 +19,6 @@ public interface TodoService {
   Page<TodoDto> findAllByDynamicParameters(Integer page, Integer size, boolean status);
 
   List<TodoDto> findAll();
+
+  List<TodoDto> getTodosByUserId(Long userId);
 }
