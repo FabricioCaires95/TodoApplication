@@ -20,7 +20,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import static com.todo.backend.utils.TodoUtils.getFinishListTasks;
+import static com.todo.backend.utils.TodoUtils.getTodoCreateDto;
 import static com.todo.backend.utils.TodoUtils.getTodoDto;
 import static com.todo.backend.utils.TodoUtils.getTodoDtoWithDatePass;
 import static com.todo.backend.utils.TodoUtils.getUpdateTodoDtoWithComplet;
@@ -83,22 +83,12 @@ public class TodoControllerTest extends AbstractTestNGSpringContextTests {
   }
 
   @Test
-  @DisplayName("Find all tasks without pagination or sort")
-  public void returnAllTodosSuccessful() throws Exception {
-    when(todoService.findAll()).thenReturn(getFinishListTasks());
-    mvc.perform(get("/todo/todos"))
-            .andExpect(status().isOk());
-
-    verify(todoService, times(1)).findAll();
-  }
-
-  @Test
   @DisplayName("create new TodoDto successful")
   public void createNewTodoSuccessful() throws Exception {
     mvc.perform(post(
                     "/todo/create")
                     .contentType(APPLICATION_JSON)
-                    .content(mapper.writeValueAsString(getTodoDto())))
+                    .content(mapper.writeValueAsString(getTodoCreateDto())))
                     .andExpect(status().isCreated());
   }
 

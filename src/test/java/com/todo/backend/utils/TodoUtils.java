@@ -1,6 +1,7 @@
 package com.todo.backend.utils;
 
 import com.todo.backend.domain.Todo;
+import com.todo.backend.dto.TodoCreateDto;
 import com.todo.backend.dto.TodoDto;
 import com.todo.backend.dto.TodoUpdateDto;
 import org.springframework.data.domain.Page;
@@ -137,6 +138,17 @@ public class TodoUtils {
                 .isFinished(false)
                 .build();
         return Arrays.asList(t1, t2);
+    }
+
+    public static TodoCreateDto getTodoCreateDto() {
+        return TodoCreateDto.builder()
+                .id(1L)
+                .title("Learning")
+                .description("learning spring boot")
+                .deadline(LocalDate.now())
+                .isFinished(false)
+                .idUser(2L)
+                .build();
     }
 
 }

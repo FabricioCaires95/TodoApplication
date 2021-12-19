@@ -18,10 +18,12 @@ import java.util.Optional;
 
 import static com.todo.backend.utils.TodoUtils.getFinishListTasks;
 import static com.todo.backend.utils.TodoUtils.getTodo;
+import static com.todo.backend.utils.TodoUtils.getTodoCreateDto;
 import static com.todo.backend.utils.TodoUtils.getTodoDto;
 import static com.todo.backend.utils.TodoUtils.getTodoEntity;
 import static com.todo.backend.utils.TodoUtils.getUpdateTodoDtoWithComplet;
 import static com.todo.backend.utils.TodoUtils.returnEntityDefaultPageable;
+import static com.todo.backend.utils.UserUtils.getUserEntity;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -42,6 +44,9 @@ public class TodoServiceImplTest {
 
     @Mock
     private TodoMapper todoMapper;
+
+    @Mock
+    private UserService userService;
 
     @BeforeMethod
     public void setup() {
@@ -143,5 +148,16 @@ public class TodoServiceImplTest {
         assertEquals(todoDtos.get(1).getId(), 2L);
         assertEquals(todoDtos.get(1).getDescription(), "describe the task 2");
         verify(repository, times(1)).findAll();
+    }
+
+    @Test
+    public void createNewTaskSuccessfulWithMethod() {
+        when(todoMapper.convertCreateDtoToEntity(any())).thenReturn(getTodoEntity());
+        when(userService.findUserEntity(anyLong())).thenReturn(getUserEntity());
+
+        service.createTodoForUser(getTodoCreateDto());
+
+        verify(userService, times(1)).findUserEntity(anyLong());
+        verify(repository, times(1)).save(any());
     }
 }
