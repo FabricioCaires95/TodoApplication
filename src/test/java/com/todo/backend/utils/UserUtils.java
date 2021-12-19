@@ -29,6 +29,14 @@ public class UserUtils {
                 .build();
     }
 
+    public static UserDto getUserDtoWithInvalidFields() {
+        return UserDto.builder()
+                .name("")
+                .email("legend123gmail.com")
+                .password("asd45")
+                .build();
+    }
+
 
     public static UserDto getDtoWithTasks() {
         UserDto user = new UserDto();

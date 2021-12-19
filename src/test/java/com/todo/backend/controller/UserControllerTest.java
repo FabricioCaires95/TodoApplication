@@ -1,5 +1,8 @@
 package com.todo.backend.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.todo.backend.exception.NotFoundException;
 import com.todo.backend.exception.RestExceptionHandler;
 import com.todo.backend.service.UserService;
@@ -16,11 +19,14 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import static com.todo.backend.utils.UserUtils.getUserDto;
+import static com.todo.backend.utils.UserUtils.getUserDtoWithInvalidFields;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -36,10 +42,15 @@ public class UserControllerTest extends AbstractTestNGSpringContextTests {
 
     protected MockMvc mvc;
 
+    private ObjectMapper mapper;
+
     @BeforeMethod
     public void beforeMethod() {
         MockitoAnnotations.openMocks(this);
         mvc = MockMvcBuilders.standaloneSetup(controller).setControllerAdvice(new RestExceptionHandler()).build();
+        this.mapper = new ObjectMapper()
+                .registerModule(new Jdk8Module())
+                .registerModule(new JavaTimeModule());
     }
 
     @Test
@@ -72,5 +83,17 @@ public class UserControllerTest extends AbstractTestNGSpringContextTests {
         mvc.perform(get("/user?email=space123@gmail.com")
                         .contentType(APPLICATION_JSON_VALUE))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void shouldGetBadRequestWhenReceiveInvalidFieldsOnRequest() throws Exception {
+        mvc.perform(post("/user/create")
+                .contentType(APPLICATION_JSON_VALUE)
+                .content(mapper.writeValueAsString(getUserDtoWithInvalidFields())))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Validation Error"))
+                .andExpect(jsonPath("$.errors['name']").value("Name is required"))
+                .andExpect(jsonPath("$.errors['email']").value("Email is invalid"))
+                .andExpect(jsonPath("$.errors['password']").value("Password is too short"));
     }
 }
