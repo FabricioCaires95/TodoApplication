@@ -1,5 +1,6 @@
 package com.todo.backend.service;
 
+import com.todo.backend.domain.User;
 import com.todo.backend.dto.UserDto;
 import com.todo.backend.exception.NotFoundException;
 import com.todo.backend.mapper.CycleAvoidingMappingContext;
@@ -39,5 +40,10 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByEmail(email)
                 .map(user -> userMapper.mapToDto(user, avoidingMappingContext))
                 .orElseThrow(() -> new NotFoundException(DEFAULT_NOT_FOUND_MSG));
+    }
+
+    @Override
+    public User findUserEntity(Long id) {
+        return userRepository.findById(id).orElseThrow(() -> new NotFoundException(DEFAULT_NOT_FOUND_MSG));
     }
 }
