@@ -1,6 +1,7 @@
 package com.todo.backend.service;
 
 import com.todo.backend.domain.Todo;
+import com.todo.backend.dto.TodoCreateDto;
 import com.todo.backend.dto.TodoDto;
 import com.todo.backend.dto.TodoUpdateDto;
 import com.todo.backend.exception.NotFoundException;
@@ -27,6 +28,9 @@ public class TodoServiceImpl implements TodoService {
 
     @Autowired
     private TodoMapper mapper;
+
+    @Autowired
+    private UserService userService;
 
     @Override
     @Cacheable(cacheNames = Todo.CACHE_NAME, key = "#id")
@@ -74,5 +78,12 @@ public class TodoServiceImpl implements TodoService {
     @Override
     public List<TodoDto> getTodosByUserId(Long userId) {
         return mapper.convertList(todoRepository.getTodosByUserIdAndIsFinished(userId, false));
+    }
+
+    @Override
+    public void createTodoForUser(TodoCreateDto todoDto) {
+        Todo todo = mapper.convertCreateDtoToEntity(todoDto);
+        todo.setUser(userService.findUserEntity(todoDto.getIdUser()));
+        todoRepository.save(todo);
     }
 }
