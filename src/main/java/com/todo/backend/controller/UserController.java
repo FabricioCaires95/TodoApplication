@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @CrossOrigin
 @RestController
 @RequestMapping("/user")
@@ -33,7 +35,7 @@ public class UserController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Void> createUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<Void> createUser(@RequestBody @Valid UserDto userDto) {
         userService.createUser(userDto);
        return new ResponseEntity<>(HttpStatus.CREATED);
     }
