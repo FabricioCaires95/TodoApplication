@@ -14,6 +14,7 @@ import java.util.Optional;
 
 import static com.todo.backend.utils.UserUtils.getUserDto;
 import static com.todo.backend.utils.UserUtils.getUserEntity;
+import static com.todo.backend.utils.UserUtils.getUserUpdateDto;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -71,6 +72,15 @@ public class UserServiceImplTest {
         assertNotNull(userDto);
         assertEquals(userDto.getEmail(), "legend123@gmail.com");
         verify(userRepository, times(1)).findByEmail(anyString());
+    }
+
+    @Test
+    public void updateUserSuccessful() {
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(getUserEntity()));
+
+        userService.update(getUserUpdateDto());
+
+        verify(userRepository).save(any());
     }
 
 }

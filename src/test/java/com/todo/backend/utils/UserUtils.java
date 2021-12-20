@@ -4,6 +4,7 @@ import com.todo.backend.domain.Todo;
 import com.todo.backend.domain.User;
 import com.todo.backend.dto.TodoDto;
 import com.todo.backend.dto.UserDto;
+import com.todo.backend.dto.UserUpdateDto;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -26,6 +27,23 @@ public class UserUtils {
                 .name("legend")
                 .email("legend123@gmail.com")
                 .password("asdadadafasfas")
+                .build();
+    }
+
+    public static UserUpdateDto getUserUpdateDto() {
+        return UserUpdateDto.builder()
+                .id(1L)
+                .name("legend")
+                .email("legend155@gmail.com")
+                .password("faf4587")
+                .build();
+    }
+
+    public static UserUpdateDto getUserUpdateDtoWithInvalidFields() {
+        return UserUpdateDto.builder()
+                .name("legend")
+                .email("legend15gmail.com")
+                .password("faf")
                 .build();
     }
 
