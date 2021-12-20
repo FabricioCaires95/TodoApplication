@@ -20,12 +20,18 @@ import org.testng.annotations.Test;
 
 import static com.todo.backend.utils.UserUtils.getUserDto;
 import static com.todo.backend.utils.UserUtils.getUserDtoWithInvalidFields;
+import static com.todo.backend.utils.UserUtils.getUserUpdateDto;
+import static com.todo.backend.utils.UserUtils.getUserUpdateDtoWithInvalidFields;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -95,5 +101,24 @@ public class UserControllerTest extends AbstractTestNGSpringContextTests {
                 .andExpect(jsonPath("$.errors['name']").value("Name is required"))
                 .andExpect(jsonPath("$.errors['email']").value("Email is invalid"))
                 .andExpect(jsonPath("$.errors['password']").value("Password is too short"));
+    }
+
+    @Test
+    public void testUpdateUserSuccessful() throws Exception {
+        mvc.perform(put("/user/update")
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .content(mapper.writeValueAsString(getUserUpdateDto())))
+                .andExpect(status().isNoContent());
+        verify(userService, times(1)).update(any());
+    }
+
+    @Test
+    public void testGetBadRequestWhenPassingInvalidFields() throws Exception {
+        mvc.perform(put("/user/update")
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .content(mapper.writeValueAsString(getUserUpdateDtoWithInvalidFields())))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Validation Error"))
+                .andExpect(jsonPath("$.errors['id']").value("User id is required"));
     }
 }
