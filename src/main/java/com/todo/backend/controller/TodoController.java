@@ -39,11 +39,12 @@ public class TodoController {
 
   @GetMapping("/all")
   public ResponseEntity<Page<TodoDto>> findAllTasksPageable(
+          @RequestParam(value = "userId") Long userId,
           @RequestParam(value = "page", defaultValue = "0") Integer page,
           @RequestParam(value = "size", defaultValue = "3") Integer size,
           @RequestParam(value = "isFinished", defaultValue = "false") Boolean isFinished
   ) {
-    return ResponseEntity.ok(todoService.findAllByDynamicParameters(page, size, isFinished));
+    return ResponseEntity.ok(todoService.findAllByDynamicParameters(page, size, isFinished, userId));
   }
 
   @GetMapping(value = "/todosByUserId/{id}", produces = MediaType.APPLICATION_JSON_VALUE)

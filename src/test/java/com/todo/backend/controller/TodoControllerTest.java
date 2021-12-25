@@ -147,9 +147,9 @@ public class TodoControllerTest extends AbstractTestNGSpringContextTests {
   @Test
   @DisplayName("find tasks finished by default parameters")
   public void getTaskFinishedWithDefaultParametersSuccessful() throws Exception {
-    when(todoService.findAllByDynamicParameters(anyInt(), anyInt(), anyBoolean())).thenReturn(returnDefaultPageable());
+    when(todoService.findAllByDynamicParameters(anyInt(), anyInt(), anyBoolean(), anyLong())).thenReturn(returnDefaultPageable());
     mvc.perform(get(
-                    "/todo/all"))
+                    "/todo/all?userId=1"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.size").value(2))
             .andExpect(jsonPath("$.content[0].id").value(1L))
@@ -157,16 +157,16 @@ public class TodoControllerTest extends AbstractTestNGSpringContextTests {
             .andExpect(jsonPath("$.content[1].id").value(2L))
             .andExpect(jsonPath("$.content[1].isFinished").value(false));
 
-    verify(todoService, times(1)).findAllByDynamicParameters(anyInt(), anyInt(), anyBoolean());
+    verify(todoService, times(1)).findAllByDynamicParameters(anyInt(), anyInt(), anyBoolean(), anyLong());
   }
 
   @Test
   @DisplayName("Passing specified parameters on request")
   public void shouldPassSpecifiedArguments() throws Exception {
     mvc.perform(get(
-                    "/todo/all?page=2&size=5&isFinished=true"))
+                    "/todo/all?userId=1&page=2&size=5&isFinished=true"))
             .andExpect(status().isOk());
-    verify(todoService, times(1)).findAllByDynamicParameters(2, 5, true);
+    verify(todoService, times(1)).findAllByDynamicParameters(2, 5, true, 1L);
   }
 
 

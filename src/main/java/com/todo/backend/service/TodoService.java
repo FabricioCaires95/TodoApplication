@@ -19,7 +19,7 @@ public interface TodoService {
 
   TodoDto update(TodoUpdateDto todoDto);
 
-  Page<TodoDto> findAllByDynamicParameters(Integer page, Integer size, boolean status);
+  Page<TodoDto> findAllByDynamicParameters(Integer page, Integer size, boolean status, Long userId);
 
   List<TodoDto> findAll();
 

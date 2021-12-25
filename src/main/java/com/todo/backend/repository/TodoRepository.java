@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface TodoRepository extends JpaRepository<Todo, Long> {
 
-    Page<Todo> findAllByIsFinished(Pageable pageable, boolean isFinished);
+    Page<Todo> findAllByIsFinishedAndUserId(Pageable pageable, boolean isFinished, Long idUser);
 
     List<Todo> getTodosByUserIdAndIsFinished(Long userId, boolean isFinished);
 

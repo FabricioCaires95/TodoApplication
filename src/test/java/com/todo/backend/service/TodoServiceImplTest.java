@@ -115,13 +115,13 @@ public class TodoServiceImplTest {
     @Test
     public void getAllTasksSuccessful() {
         Page<Todo> todoPage1 = returnEntityDefaultPageable();
-        when(repository.findAllByIsFinished(any(), anyBoolean())).thenReturn(todoPage1);
+        when(repository.findAllByIsFinishedAndUserId(any(), anyBoolean(), anyLong())).thenReturn(todoPage1);
 
-        Page<TodoDto> dtoPage = service.findAllByDynamicParameters(0, 2, false);
+        Page<TodoDto> dtoPage = service.findAllByDynamicParameters(0, 2, false, 1L);
 
         assertNotNull(dtoPage);
         assertEquals(dtoPage.getContent().size(), 2);
-        verify(repository, times(1)).findAllByIsFinished(any(), anyBoolean());
+        verify(repository, times(1)).findAllByIsFinishedAndUserId(any(), anyBoolean(), anyLong());
 
     }
 
