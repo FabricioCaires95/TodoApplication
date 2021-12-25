@@ -20,12 +20,12 @@ import static com.todo.backend.utils.TodoUtils.getFinishListTasks;
 import static com.todo.backend.utils.TodoUtils.getTodo;
 import static com.todo.backend.utils.TodoUtils.getTodoCreateDto;
 import static com.todo.backend.utils.TodoUtils.getTodoDto;
+import static com.todo.backend.utils.TodoUtils.getTodoDtoToUpdate;
 import static com.todo.backend.utils.TodoUtils.getTodoEntity;
-import static com.todo.backend.utils.TodoUtils.getUpdateTodoDtoWithComplet;
+import static com.todo.backend.utils.TodoUtils.getTodoEntityWithUser;
+import static com.todo.backend.utils.TodoUtils.getUpdateTodoDtoForTest;
 import static com.todo.backend.utils.TodoUtils.returnEntityDefaultPageable;
-import static com.todo.backend.utils.UserUtils.getUserEntity;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -44,9 +44,6 @@ public class TodoServiceImplTest {
 
     @Mock
     private TodoMapper todoMapper;
-
-    @Mock
-    private UserService userService;
 
     @BeforeMethod
     public void setup() {
@@ -95,28 +92,24 @@ public class TodoServiceImplTest {
 
     @Test
     public void updateTaskSuccessful() {
-        TodoUpdateDto updateDto = getUpdateTodoDtoWithComplet();
-        Todo t1 = getTodoEntity();
-        TodoDto dto = new TodoDto();
-        when(repository.findById(t1.getId())).thenReturn(Optional.of(t1));
-        when(todoMapper.convertUpdateDtoToEntity(any())).thenReturn(t1);
-        when(todoMapper.convertToDto(any())).thenReturn(dto);
-        dto = service.update(updateDto);
+        TodoUpdateDto updatedEntity = getUpdateTodoDtoForTest();
+        Todo newEntityConverted = getTodoEntityWithUser();
+        TodoDto result = getTodoDtoToUpdate();
 
-        assertNotNull(dto);
-        assertNotEquals(updateDto.getTitle(), t1.getTitle());
-        assertNotEquals(updateDto.getDescription(), t1.getDescription());
-        assertNotEquals(updateDto.getDeadline(), t1.getDeadline());
-        assertNotEquals(updateDto.getIsFinished(), t1.getIsFinished());
-        verify(repository, times(1)).findById(anyLong());
-    }
+        when(todoMapper.convertUpdateDtoToEntity(any())).thenReturn(newEntityConverted);
+        when(repository.save(any())).thenReturn(newEntityConverted);
+        when(todoMapper.convertToDto(any())).thenReturn(result);
 
-    @Test(expectedExceptions = NotFoundException.class)
-    public void notFoundUpdateTask() {
-        TodoUpdateDto updateDto = getUpdateTodoDtoWithComplet();
-        when(repository.findById(anyLong())).thenReturn(Optional.empty());
-        service.update(updateDto);
-        verify(repository, times(1)).findById(anyLong());
+        result = service.update(updatedEntity);
+
+        assertNotNull(result);
+        assertEquals(updatedEntity.getTitle(), result.getTitle());
+        assertEquals(updatedEntity.getId(), result.getId());
+        assertEquals(updatedEntity.getDescription(), result.getDescription());
+        assertEquals(updatedEntity.getDeadline(), result.getDeadline());
+        verify(todoMapper).convertUpdateDtoToEntity(any());
+        verify(todoMapper).convertToDto(any());
+        verify(repository).save(any());
     }
 
     @Test
@@ -153,11 +146,9 @@ public class TodoServiceImplTest {
     @Test
     public void createNewTaskSuccessfulWithMethod() {
         when(todoMapper.convertCreateDtoToEntity(any())).thenReturn(getTodoEntity());
-        when(userService.findUserEntity(anyLong())).thenReturn(getUserEntity());
 
         service.createTodoForUser(getTodoCreateDto());
 
-        verify(userService, times(1)).findUserEntity(anyLong());
         verify(repository, times(1)).save(any());
     }
 }

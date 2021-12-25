@@ -15,6 +15,7 @@ public class UserUtils {
 
     public static User getUserEntity() {
         return User.builder()
+                .id(1L)
                 .name("spacer")
                 .email("spacer@gmail.com")
                 .password("sdadasdsada")

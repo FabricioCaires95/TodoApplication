@@ -39,11 +39,22 @@ public class TodoUtils {
                 .build();
     }
 
+    public static Todo getTodoEntityWithUser() {
+        return Todo.builder()
+                .id(3L)
+                .title("Learning redis")
+                .description("learning redis")
+                .deadline(LocalDate.now().plusDays(3))
+                .isFinished(false)
+                .user(UserUtils.getUserEntity())
+                .build();
+    }
+
     public static TodoDto getTodoDtoToUpdate(){
         return TodoDto.builder()
-                .id(2L)
-                .title("Make something 2")
-                .description("describe the task 2")
+                .id(3L)
+                .title("redis")
+                .description("learning redis")
                 .deadline(LocalDate.now().plusDays(3))
                 .isFinished(true)
                 .build();
@@ -61,11 +72,23 @@ public class TodoUtils {
 
     public static TodoUpdateDto getUpdateTodoDtoWithComplet() {
         return TodoUpdateDto.builder()
-                .id(1L)
+                .id(3L)
                 .title("Make something")
-                .description("describe the task")
-                .deadline(LocalDate.now().plusDays(2))
+                .description("Updated teste")
+                .deadline(LocalDate.now().plusDays(1))
                 .isFinished(true)
+                .userId(1L)
+                .build();
+    }
+
+    public static TodoUpdateDto getUpdateTodoDtoForTest() {
+        return TodoUpdateDto.builder()
+                .id(3L)
+                .title("redis")
+                .description("learning redis")
+                .deadline(LocalDate.now().plusDays(3))
+                .isFinished(false)
+                .userId(1L)
                 .build();
     }
 
@@ -148,6 +171,16 @@ public class TodoUtils {
                 .deadline(LocalDate.now())
                 .isFinished(false)
                 .idUser(2L)
+                .build();
+    }
+
+    public static TodoCreateDto getTodoCreateDtoInvalidInputs() {
+        return TodoCreateDto.builder()
+                .title("")
+                .description("")
+                .deadline(LocalDate.now().minusDays(1))
+                .isFinished(false)
+                .idUser(null)
                 .build();
     }
 

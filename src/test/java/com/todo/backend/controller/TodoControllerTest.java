@@ -21,12 +21,13 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import static com.todo.backend.utils.TodoUtils.getTodoCreateDto;
+import static com.todo.backend.utils.TodoUtils.getTodoCreateDtoInvalidInputs;
 import static com.todo.backend.utils.TodoUtils.getTodoDto;
-import static com.todo.backend.utils.TodoUtils.getTodoDtoWithDatePass;
 import static com.todo.backend.utils.TodoUtils.getUpdateTodoDtoWithComplet;
 import static com.todo.backend.utils.TodoUtils.getUpdateTodoDtoWithInvalidArguments;
 import static com.todo.backend.utils.TodoUtils.returnDefaultPageable;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.anyBoolean;
@@ -98,12 +99,14 @@ public class TodoControllerTest extends AbstractTestNGSpringContextTests {
     mvc.perform(post(
                     "/todo/create")
                     .contentType(APPLICATION_JSON)
-                    .content(mapper.writeValueAsString(getTodoDtoWithDatePass())))
+                    .content(mapper.writeValueAsString(getTodoCreateDtoInvalidInputs())))
             .andExpect(status().isBadRequest())
             .andExpect(result -> assertTrue(result.getResolvedException() instanceof MethodArgumentNotValidException))
             .andExpect(jsonPath("$.message").value("Validation Error"))
             .andExpect(jsonPath("$.errors.['deadline']").value("must be a date in the present or in the future"))
-            .andExpect(jsonPath("$.errors.['title']").value("title is required"));
+            .andExpect(jsonPath("$.errors.['title']").value("title is required"))
+            .andExpect(jsonPath("$.errors.['description']").value("description is required"))
+            .andExpect(jsonPath("$.errors.['idUser']").value("User id is required"));
   }
 
   @Test
@@ -127,7 +130,9 @@ public class TodoControllerTest extends AbstractTestNGSpringContextTests {
             .andExpect(jsonPath("$.errors['title']").value("title is required"))
             .andExpect(jsonPath("$.errors['description']").value("description is required"))
             .andExpect(jsonPath("$.errors['deadline']").value("must be a date in the present or in the future"))
+            .andExpect(jsonPath("$.errors['userId']").value("User id is Required"))
             .andExpect(status().isBadRequest());
+    verify(todoService, times(0)).update(any());
   }
 
   @Test
