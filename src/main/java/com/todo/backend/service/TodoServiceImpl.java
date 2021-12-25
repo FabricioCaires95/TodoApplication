@@ -1,6 +1,6 @@
 package com.todo.backend.service;
 
-import com.todo.backend.domain.Todo;
+
 import com.todo.backend.dto.TodoCreateDto;
 import com.todo.backend.dto.TodoDto;
 import com.todo.backend.dto.TodoUpdateDto;
@@ -23,17 +23,16 @@ import java.util.List;
 @Slf4j
 public class TodoServiceImpl implements TodoService {
 
+    private static final String REDIS_CACHE = "todoCache";
+
     @Autowired
     private TodoRepository todoRepository;
 
     @Autowired
     private TodoMapper mapper;
 
-    @Autowired
-    private UserService userService;
-
     @Override
-    @Cacheable(cacheNames = Todo.CACHE_NAME, key = "#id")
+    @Cacheable(value = REDIS_CACHE, key = "#id")
     public TodoDto findById(Long id) {
         return todoRepository.findById(id)
                 .map(todo -> mapper.convertToDto(todo))
@@ -41,27 +40,23 @@ public class TodoServiceImpl implements TodoService {
     }
 
     @Override
-    @CacheEvict(cacheNames = Todo.CACHE_NAME, allEntries = true)
     public void createTodo(TodoDto todoDto) {
         todoRepository.save(mapper.convertToEntity(todoDto));
     }
 
     @Override
-    @CacheEvict(cacheNames = Todo.CACHE_NAME, allEntries = true)
     public void deleteById(Long id) {
         todoRepository.deleteById(id);
     }
 
     @Override
-    @CacheEvict(cacheNames = Todo.CACHE_NAME, allEntries = true)
+    @CacheEvict(value = REDIS_CACHE, key = "#todoDto.userId")
     public TodoDto update(TodoUpdateDto todoDto) {
-        return todoRepository.findById(todoDto.getId()).map(todo -> mapper.
-                convertToDto(todoRepository.save(
-                        mapper.convertUpdateDtoToEntity(todoDto)))).orElseThrow(() -> new NotFoundException("Todo Not Found !"));
+        return mapper.convertToDto(todoRepository.save(mapper.convertUpdateDtoToEntity(todoDto)));
     }
 
     @Override
-    @Cacheable(cacheNames = Todo.CACHE_NAME)
+    @Cacheable(value = REDIS_CACHE)
     public Page<TodoDto> findAllByDynamicParameters(Integer page, Integer size, boolean status) {
         PageRequest request = PageRequest.of(page, size, Sort.by("deadline").ascending());
         return todoRepository
@@ -70,20 +65,19 @@ public class TodoServiceImpl implements TodoService {
     }
 
     @Override
-    @Cacheable(cacheNames = Todo.CACHE_NAME)
     public List<TodoDto> findAll() {
         return mapper.convertList(todoRepository.findAll());
     }
 
     @Override
+    @Cacheable(value = REDIS_CACHE, key = "#userId" )
     public List<TodoDto> getTodosByUserId(Long userId) {
         return mapper.convertList(todoRepository.getTodosByUserIdAndIsFinished(userId, false));
     }
 
     @Override
+    @CacheEvict(value = REDIS_CACHE, key = "#todoDto.idUser")
     public void createTodoForUser(TodoCreateDto todoDto) {
-        Todo todo = mapper.convertCreateDtoToEntity(todoDto);
-        todo.setUser(userService.findUserEntity(todoDto.getIdUser()));
-        todoRepository.save(todo);
+        todoRepository.save(mapper.convertCreateDtoToEntity(todoDto));
     }
 }
