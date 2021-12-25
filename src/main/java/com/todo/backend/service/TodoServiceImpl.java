@@ -58,7 +58,6 @@ public class TodoServiceImpl implements TodoService {
     @Override
     @Cacheable(value = REDIS_CACHE, key = "#page")
     public Page<TodoDto> findAllByDynamicParameters(Integer page, Integer size, boolean status, Long userId) {
-        log.info("PAGEABLE");
         PageRequest request = PageRequest.of(page, size, Sort.by("deadline").ascending());
         return todoRepository
                 .findAllByIsFinishedAndUserId(request, status, userId)
