@@ -19,8 +19,6 @@ import java.time.LocalDate;
 @Builder
 public class TodoUpdateDto implements Serializable {
 
-    public static final String CACHE_NAME = "todo";
-
     @NotNull(message = "ID is required")
     private Long id;
 
@@ -35,4 +33,7 @@ public class TodoUpdateDto implements Serializable {
     private LocalDate deadline;
 
     private Boolean isFinished;
+
+    @NotNull(message = "User id is Required")
+    private Long userId;
 }

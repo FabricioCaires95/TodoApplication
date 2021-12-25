@@ -18,9 +18,10 @@ public interface TodoMapper {
   @Mapping(target = "user.tasks", ignore = true)
   Todo convertToEntity(TodoDto dto);
 
+  @Mapping(target = "user.id", source = "userId")
   Todo convertUpdateDtoToEntity(TodoUpdateDto todoUpdateDto);
 
-  @Mapping(target = "user", ignore = true)
+  @Mapping(target = "user.id", source = "todoCreateDto.idUser")
   Todo convertCreateDtoToEntity(TodoCreateDto todoCreateDto);
 
   @Mapping(target = "user.tasks", ignore = true)

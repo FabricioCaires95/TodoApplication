@@ -10,6 +10,7 @@ import lombok.Setter;
 
 import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Getter
@@ -36,5 +37,6 @@ public class TodoCreateDto {
 
     private Boolean isFinished;
 
+    @NotNull(message = "User id is required")
     private Long idUser;
 }
