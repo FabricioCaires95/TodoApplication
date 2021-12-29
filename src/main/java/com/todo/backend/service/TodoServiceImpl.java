@@ -46,6 +46,7 @@ public class TodoServiceImpl implements TodoService {
     }
 
     @Override
+    @CacheEvict(value = REDIS_CACHE, key = "#id")
     public void deleteById(Long id) {
         todoRepository.deleteById(id);
     }
@@ -73,14 +74,13 @@ public class TodoServiceImpl implements TodoService {
     }
 
     @Override
-    @Cacheable(value = REDIS_CACHE, key = "#userId" )
+    @Cacheable(value = REDIS_CACHE, key = "#userId", unless = "#result == null || #result.size() < 1")
     public List<TodoDto> getTodosByUserId(Long userId) {
         log.info("Get all by User Id");
         return mapper.convertList(todoRepository.getTodosByUserIdAndIsFinished(userId, false));
     }
 
     @Override
-    @CacheEvict(value = REDIS_CACHE, key = "#todoDto.idUser")
     public void createTodoForUser(TodoCreateDto todoDto) {
         log.info("Create User");
         todoRepository.save(mapper.convertCreateDtoToEntity(todoDto));
