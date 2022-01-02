@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -48,6 +49,7 @@ public class TodoController {
   }
 
   @GetMapping(value = "/todosByUserId/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  @PreAuthorize("hasAnyRole('ROLE_USER')")
   public ResponseEntity<List<TodoDto>> findAll(@PathVariable Long id) {
     return ResponseEntity.ok(todoService.getTodosByUserId(id));
   }
