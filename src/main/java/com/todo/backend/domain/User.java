@@ -40,6 +40,8 @@ public class User implements Serializable {
     @OneToMany(mappedBy = "user")
     private Set<Todo> tasks = new HashSet<>();
 
+    @OneToMany(mappedBy = "user")
+    private Set<UserRole> userRoles = new HashSet<>();
 
     @Override
     public int hashCode() {
