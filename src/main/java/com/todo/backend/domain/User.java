@@ -1,12 +1,12 @@
 package com.todo.backend.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import com.todo.backend.enums.Roles;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -15,10 +15,11 @@ import javax.persistence.OneToMany;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+
+
+
 @Entity
 @Getter
 @Setter
@@ -40,8 +41,32 @@ public class User implements Serializable {
     @OneToMany(mappedBy = "user")
     private Set<Todo> tasks = new HashSet<>();
 
-    @OneToMany(mappedBy = "user")
-    private Set<UserRole> userRoles = new HashSet<>();
+    @ElementCollection
+    @CollectionTable(name = "ROLES")
+    private Set<String> userRoles = new HashSet<>();
+
+
+    public User() {
+        addRole(Roles.USER);
+    }
+
+    public User(Long id, String name, String email, String password, Set<Todo> tasks) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.tasks = tasks;
+        addRole(Roles.USER);
+    }
+
+
+    public Set<Roles> getUserRoles() {
+        return userRoles.stream().map(Roles::toEnumRoles).collect(Collectors.toSet());
+    }
+
+    public void addRole(Roles roles) {
+        userRoles.add(roles.getDescription());
+    }
 
     @Override
     public int hashCode() {
