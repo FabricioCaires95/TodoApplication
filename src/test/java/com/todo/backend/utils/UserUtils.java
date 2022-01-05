@@ -7,6 +7,7 @@ import com.todo.backend.dto.UserDto;
 import com.todo.backend.dto.UserUpdateDto;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,12 +15,9 @@ public class UserUtils {
 
 
     public static User getUserEntity() {
-        return User.builder()
-                .id(1L)
-                .name("spacer")
-                .email("spacer@gmail.com")
-                .password("sdadasdsada")
-                .build();
+       return new User(null, "spacer",
+               "spacer@gmail.com", "sdadasdsada",
+               Collections.emptySet());
     }
 
 
