@@ -1,15 +1,17 @@
 package com.todo.backend.security;
 
-import lombok.Builder;
+import com.todo.backend.enums.Roles;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-@Builder
+
 @Getter
 @Setter
 public class UserSecurityDto implements UserDetails {
@@ -17,16 +19,16 @@ public class UserSecurityDto implements UserDetails {
     private Long id;
     private String username;
     private String password;
-    private Set<GrantedAuthority> authorites;
+    private Collection<? extends GrantedAuthority> authorites;
 
     public UserSecurityDto() {
     }
 
-    public UserSecurityDto(Long id, String username, String password, Set<GrantedAuthority> authorites) {
+    public UserSecurityDto(Long id, String username, String password, Set<Roles> authorites) {
         this.id = id;
         this.username = username;
         this.password = password;
-        this.authorites = authorites;
+        this.authorites = authorites.stream().map(role -> new SimpleGrantedAuthority(role.getDescription())).collect(Collectors.toList());
     }
 
     @Override

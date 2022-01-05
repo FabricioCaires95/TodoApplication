@@ -1,12 +1,12 @@
 package com.todo.backend.service;
 
-import com.todo.backend.domain.Role;
 import com.todo.backend.domain.Todo;
 import com.todo.backend.domain.User;
-import com.todo.backend.repository.RoleRepository;
+import com.todo.backend.enums.Roles;
 import com.todo.backend.repository.TodoRepository;
 import com.todo.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -23,21 +23,20 @@ public class DBService {
   private UserRepository userRepository;
 
   @Autowired
-  private RoleRepository roleRepository;
+  private BCryptPasswordEncoder encoder;
+
 
   public void instanceDatabase() {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-
-    Role r1 = new Role();
-    r1.setName("ROLE_USER");
-
-    Role r2 = new Role();
-    r2.setName("ROLE_ADMIN");
+    User user1 = new User();
+    user1.setName("Fabricio");
+    user1.setEmail("fabricio@gmail.com");
+    user1.setPassword(encoder.encode("julia123"));
 
     User user = new User(
-            1L, "legend","legend22@gmail.com", "{bcrypt}$2a$10$mfT7JIWtFSt2cDKtOT9MC.A1LhPZI8BDbmP74254576LXQIWiMpHW", null , null);
+            1L, "legend","legend22@gmail.com", encoder.encode("pet798"), null);
 
-
+    user.addRole(Roles.ADMIN);
 
     Todo t1 = new Todo(null,
         "Study",
@@ -51,8 +50,7 @@ public class DBService {
             LocalDate.parse("05/09/2021", formatter),
             false, user);
 
-    roleRepository.saveAll(Arrays.asList(r1,r2));
-    userRepository.save(user);
+    userRepository.saveAll(Arrays.asList(user, user1));
     todoRepository.saveAll(Arrays.asList(t1,t2));
   }
 
