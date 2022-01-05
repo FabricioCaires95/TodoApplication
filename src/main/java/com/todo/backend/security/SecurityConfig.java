@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -29,6 +30,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             "/h2-console/**", "/login", "/user/create"
     };
 
+    private static final String[] PUBLIC_ROUTES_GET = {
+            "/user/**", "/todo/**"
+    };
+
     @Autowired
     private Environment environment;
 
@@ -46,7 +51,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         }
         http.cors().and().csrf().disable();
         http.authorizeRequests()
-                .antMatchers(PUBLIC_ROUTES).permitAll()
+                .antMatchers(PUBLIC_ROUTES)
+                .permitAll()
+                .antMatchers(HttpMethod.GET, PUBLIC_ROUTES_GET)
+                .permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
