@@ -7,8 +7,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -22,16 +22,15 @@ import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
 @Slf4j
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String[] PUBLIC_ROUTES = {
-            "/h2-console/**", "/login", "/user/create"
+            "/h2-console/**"
     };
 
-    private static final String[] PUBLIC_ROUTES_GET = {
-            "/user/**", "/todo/**"
+    private static final String[] PUBLIC_ROUTES_POST = {
+            "/user/create"
     };
 
     @Autowired
@@ -43,6 +42,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private JwtUtil jwtUtil;
 
+
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers(PUBLIC_ROUTES);
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
@@ -51,9 +56,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         }
         http.cors().and().csrf().disable();
         http.authorizeRequests()
-                .antMatchers(PUBLIC_ROUTES)
-                .permitAll()
-                .antMatchers(HttpMethod.GET, PUBLIC_ROUTES_GET)
+                .antMatchers(HttpMethod.POST, PUBLIC_ROUTES_POST)
                 .permitAll()
                 .anyRequest()
                 .authenticated()
@@ -61,7 +64,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.addFilter(new JwtAuthenticationFilter(authenticationManager(), jwtUtil));
-
+        http.addFilter(new JwtAuthorizationFilter(authenticationManager(), userDetailService, jwtUtil));
 
     }
 

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.Optional;
 
 @Component
 public class JwtUtil {
@@ -23,7 +24,11 @@ public class JwtUtil {
                 .sign(Algorithm.HMAC512(secret));
     }
 
-    public void test(String token ) {
-        String x = JWT.require(Algorithm.HMAC512(secret)).build().verify(token).getSubject();
+    public Optional<String> getUserName(String token) {
+        return Optional.of(JWT
+                .require(Algorithm.HMAC512(secret))
+                .build()
+                .verify(token)
+                .getSubject());
     }
 }
