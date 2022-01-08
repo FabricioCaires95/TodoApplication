@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -26,11 +25,9 @@ import java.util.Arrays;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String[] PUBLIC_ROUTES = {
-            "/h2-console/**"
-    };
-
-    private static final String[] PUBLIC_ROUTES_POST = {
-            "/user/create"
+            "/h2-console/**",
+            "/user/create",
+            "/swagger-ui.html",
     };
 
     @Autowired
@@ -56,10 +53,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         }
         http.cors().and().csrf().disable();
         http.authorizeRequests()
-                .antMatchers(HttpMethod.POST, PUBLIC_ROUTES_POST)
-                .permitAll()
-                .anyRequest()
-                .authenticated()
+                .antMatchers(PUBLIC_ROUTES).permitAll()
+                .anyRequest().authenticated()
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
