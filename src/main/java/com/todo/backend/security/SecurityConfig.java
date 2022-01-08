@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -21,6 +22,7 @@ import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 @Slf4j
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -52,7 +54,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             http.headers().frameOptions().disable();
         }
         http.cors().and().csrf().disable();
-        http.authorizeRequests()
+        http.exceptionHandling().authenticationEntryPoint((request, response, e) -> {
+                    response.sendError(response.SC_UNAUTHORIZED, e.getMessage()
+                    );
+                })
+                .and()
+                .authorizeRequests()
                 .antMatchers(PUBLIC_ROUTES).permitAll()
                 .anyRequest().authenticated()
                 .and()
