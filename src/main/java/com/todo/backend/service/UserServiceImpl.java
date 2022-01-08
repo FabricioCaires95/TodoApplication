@@ -7,10 +7,13 @@ import com.todo.backend.exception.NotFoundException;
 import com.todo.backend.mapper.CycleAvoidingMappingContext;
 import com.todo.backend.mapper.UserMapper;
 import com.todo.backend.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     private static final String DEFAULT_NOT_FOUND_MSG = "User was not found !";
@@ -24,9 +27,14 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private CycleAvoidingMappingContext avoidingMappingContext;
 
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
+
     @Override
     public void createUser(UserDto userDto) {
-        userRepository.save(userMapper.mapToEntity(userDto, avoidingMappingContext));
+        var user = userMapper.mapToEntity(userDto, avoidingMappingContext);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.save(user);
     }
 
     @Override
@@ -50,6 +58,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void update(UserUpdateDto userDto) {
-        userRepository.save(userMapper.convertToEntity(userDto, avoidingMappingContext));
+        log.info("New Password: {}", userDto.getPassword());
+        var user = userMapper.convertToEntity(userDto, avoidingMappingContext);
+        log.info("Password to be encoded: {}", user.getPassword());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.save(user);
     }
 }
