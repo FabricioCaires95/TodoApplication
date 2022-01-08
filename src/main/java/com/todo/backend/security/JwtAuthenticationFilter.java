@@ -19,6 +19,8 @@ import java.util.Collections;
 @Slf4j
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
+    public static final String HEADER = "Authorization";
+
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
 
@@ -48,6 +50,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String username = ((UserSecurityDto)authResult.getPrincipal()).getUsername();
         String token = jwtUtil.generateToken(username);
         log.info("Generated Token: {{}}", token);
-        response.addHeader("Authorization", "Bearer " + token);
+        response.addHeader(HEADER, "Bearer " + token);
     }
 }

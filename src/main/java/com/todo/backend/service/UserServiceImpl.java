@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto findUserById(Long id) {;
+    public UserDto findUserById(Long id) {
         return userRepository.findById(id)
                 .map(userEntity -> userMapper.mapToDto(userEntity, avoidingMappingContext))
                 .orElseThrow(() -> new NotFoundException(DEFAULT_NOT_FOUND_MSG));
