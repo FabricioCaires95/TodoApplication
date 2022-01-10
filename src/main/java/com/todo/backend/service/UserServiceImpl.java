@@ -30,15 +30,19 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
+    @Autowired
+    private AuthorizationService authorizationService;
+
     @Override
     public void createUser(UserDto userDto) {
+        userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
         var user = userMapper.mapToEntity(userDto, avoidingMappingContext);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
     }
 
     @Override
     public UserDto findUserById(Long id) {
+        authorizationService.isAuthorizated(id);
         return userRepository.findById(id)
                 .map(userEntity -> userMapper.mapToDto(userEntity, avoidingMappingContext))
                 .orElseThrow(() -> new NotFoundException(DEFAULT_NOT_FOUND_MSG));
@@ -58,10 +62,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void update(UserUpdateDto userDto) {
-        log.info("New Password: {}", userDto.getPassword());
+        authorizationService.isAuthorizated(userDto.getId());
+        userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
         var user = userMapper.convertToEntity(userDto, avoidingMappingContext);
-        log.info("Password to be encoded: {}", user.getPassword());
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
     }
 }
