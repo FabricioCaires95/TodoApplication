@@ -1,6 +1,7 @@
 package com.todo.backend.domain;
 
 import com.todo.backend.enums.Roles;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
 
 
 
-
+@Builder
 @Entity
 @Getter
 @Setter
@@ -57,6 +58,15 @@ public class User implements Serializable {
         this.password = password;
         this.tasks = tasks;
         addRole(Roles.USER);
+    }
+
+    public User(Long id, String name, String email, String password, Set<Todo> tasks, Set<String> roles) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.tasks = tasks;
+        this.setUserRoles(roles);
     }
 
 
