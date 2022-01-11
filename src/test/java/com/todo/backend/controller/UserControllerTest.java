@@ -25,6 +25,7 @@ import static com.todo.backend.utils.UserUtils.getUserUpdateDtoWithInvalidFields
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -101,6 +102,7 @@ public class UserControllerTest extends AbstractTestNGSpringContextTests {
                 .andExpect(jsonPath("$.errors['name']").value("Name is required"))
                 .andExpect(jsonPath("$.errors['email']").value("Email is invalid"))
                 .andExpect(jsonPath("$.errors['password']").value("Password is too short"));
+        verify(userService, never()).createUser(any());
     }
 
     @Test

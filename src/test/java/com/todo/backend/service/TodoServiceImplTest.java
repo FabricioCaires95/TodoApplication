@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.todo.backend.utils.TodoUtils.getFinishListTasks;
+import static com.todo.backend.utils.TodoUtils.getListTodoDtoByUserId;
+import static com.todo.backend.utils.TodoUtils.getListTodoEntityByUserId;
 import static com.todo.backend.utils.TodoUtils.getTodo;
 import static com.todo.backend.utils.TodoUtils.getTodoCreateDto;
 import static com.todo.backend.utils.TodoUtils.getTodoDto;
@@ -26,8 +28,10 @@ import static com.todo.backend.utils.TodoUtils.getTodoEntityWithUser;
 import static com.todo.backend.utils.TodoUtils.getUpdateTodoDtoForTest;
 import static com.todo.backend.utils.TodoUtils.returnEntityDefaultPageable;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.anyBoolean;
 import static org.mockito.Mockito.times;
@@ -150,5 +154,16 @@ public class TodoServiceImplTest {
         service.createTodoForUser(getTodoCreateDto());
 
         verify(repository, times(1)).save(any());
+    }
+
+    @Test
+    public void testGetAllTodosByUserId() {
+        when(repository.getTodosByUserIdAndIsFinished(anyLong(), anyBoolean())).thenReturn(getListTodoEntityByUserId());
+        when(todoMapper.convertList(anyList())).thenReturn(getListTodoDtoByUserId());
+        List<TodoDto> list = service.getTodosByUserId(1L);
+
+        assertFalse(list.isEmpty());
+        assertEquals(2, list.size());
+        verify(repository, times(1)).getTodosByUserIdAndIsFinished(anyLong(), anyBoolean());
     }
 }

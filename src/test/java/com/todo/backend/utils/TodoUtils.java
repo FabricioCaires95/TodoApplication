@@ -60,13 +60,14 @@ public class TodoUtils {
                 .build();
     }
 
-    public static TodoDto getTodoDtoWithDatePass() {
+    public static TodoDto getTodoForUser() {
         return TodoDto.builder()
                 .id(1L)
-                .title(null)
+                .title("teste 2 ")
                 .description("learning spring boot")
-                .deadline(passDate)
+                .deadline(LocalDate.now().plusDays(2))
                 .isFinished(false)
+                .user(UserUtils.getUserDto())
                 .build();
     }
 
@@ -182,6 +183,15 @@ public class TodoUtils {
                 .isFinished(false)
                 .idUser(null)
                 .build();
+    }
+
+    public static List<TodoDto> getListTodoDtoByUserId() {
+        return Arrays.asList(getTodoForUser(), getTodoForUser());
+    }
+
+
+    public static List<Todo> getListTodoEntityByUserId() {
+        return Arrays.asList(getTodoEntity(), getTodoEntity());
     }
 
 }

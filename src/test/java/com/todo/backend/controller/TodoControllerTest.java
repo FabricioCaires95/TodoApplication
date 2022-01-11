@@ -20,6 +20,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import static com.todo.backend.utils.TodoUtils.getListTodoDtoByUserId;
 import static com.todo.backend.utils.TodoUtils.getTodoCreateDto;
 import static com.todo.backend.utils.TodoUtils.getTodoCreateDtoInvalidInputs;
 import static com.todo.backend.utils.TodoUtils.getTodoDto;
@@ -169,5 +170,14 @@ public class TodoControllerTest extends AbstractTestNGSpringContextTests {
     verify(todoService, times(1)).findAllByDynamicParameters(2, 5, true, 1L);
   }
 
+
+  @Test
+  public void getTodosByUserIdSuccess() throws Exception {
+    when(todoService.getTodosByUserId(anyLong())).thenReturn(getListTodoDtoByUserId());
+    mvc.perform(get(
+            "/todo/todosByUserId/{id}", 1L
+    )).andExpect(status().isOk());
+    verify(todoService, times(1)).getTodosByUserId(anyLong());
+  }
 
 }
