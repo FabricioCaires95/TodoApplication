@@ -77,6 +77,7 @@ public class UserServiceImplTest {
         assertEquals(userDto.getEmail(), "legend123@gmail.com");
         assertEquals(userDto.getName(), "legend");
         verify(userRepository, times(1)).findById(anyLong());
+        verify(authorizationService, times(1)).isAuthorizated(anyLong());
     }
 
     @Test(expectedExceptions = AuthorizationException.class)

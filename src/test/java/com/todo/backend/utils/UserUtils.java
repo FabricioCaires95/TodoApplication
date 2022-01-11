@@ -5,6 +5,7 @@ import com.todo.backend.domain.User;
 import com.todo.backend.dto.TodoDto;
 import com.todo.backend.dto.UserDto;
 import com.todo.backend.dto.UserUpdateDto;
+import com.todo.backend.security.UserSecurityDto;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -13,11 +14,29 @@ import java.util.Set;
 
 public class UserUtils {
 
+    public static final Long USER_ID = 4L;
+    public static final String USERNAME = "fabio";
+    public static final String EMAIL = "fabio123@gmail.com";
+    public static final String PASSWORD = "ASFFAFASFASF214215252";
 
     public static User getUserEntity() {
        return new User(null, "spacer",
                "spacer@gmail.com", "sdadasdsada",
                Collections.emptySet());
+    }
+
+    public static User getUserEntityAuth() {
+       return User.builder()
+               .id(USER_ID)
+               .name(USERNAME)
+               .email(EMAIL)
+               .password(PASSWORD)
+               .userRoles(Collections.singleton("ROLE_USER"))
+               .build();
+    }
+
+    public static UserSecurityDto getUserEntityAuthDto() {
+        return new UserSecurityDto(USER_ID, EMAIL, PASSWORD, Collections.emptySet());
     }
 
 
