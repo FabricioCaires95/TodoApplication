@@ -15,5 +15,6 @@ public interface UserMapper {
     @Mapping(target = "tasks", ignore = true)
     User convertToEntity(UserUpdateDto userDto, @Context CycleAvoidingMappingContext cycleAvoidingMappingContext);
 
+    @Mapping(target = "password", ignore = true)
     UserDto mapToDto(User user, @Context CycleAvoidingMappingContext cycleAvoidingMappingContext);
 }
