@@ -9,6 +9,7 @@ import static com.todo.backend.utils.UserUtils.getDtoWithTasks;
 import static com.todo.backend.utils.UserUtils.getUserWithTasks;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class UserMapperTest {
 
@@ -32,7 +33,7 @@ public class UserMapperTest {
         assertNotNull(user);
         assertEquals(user.getName(), userDto.getName());
         assertEquals(user.getEmail(), userDto.getEmail());
-        assertEquals(user.getPassword(), userDto.getPassword());
+        assertNull(userDto.getPassword());
         assertEquals(user.getTasks().size(), 2);
     }
 
