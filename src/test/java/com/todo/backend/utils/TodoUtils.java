@@ -1,6 +1,7 @@
 package com.todo.backend.utils;
 
 import com.todo.backend.domain.Todo;
+import com.todo.backend.dto.TodoCreateDto;
 import com.todo.backend.dto.TodoDto;
 import com.todo.backend.dto.TodoUpdateDto;
 import org.springframework.data.domain.Page;
@@ -38,33 +39,57 @@ public class TodoUtils {
                 .build();
     }
 
+    public static Todo getTodoEntityWithUser() {
+        return Todo.builder()
+                .id(3L)
+                .title("Learning redis")
+                .description("learning redis")
+                .deadline(LocalDate.now().plusDays(3))
+                .isFinished(false)
+                .user(UserUtils.getUserEntity())
+                .build();
+    }
+
     public static TodoDto getTodoDtoToUpdate(){
         return TodoDto.builder()
-                .id(2L)
-                .title("Make something 2")
-                .description("describe the task 2")
+                .id(3L)
+                .title("redis")
+                .description("learning redis")
                 .deadline(LocalDate.now().plusDays(3))
                 .isFinished(true)
                 .build();
     }
 
-    public static TodoDto getTodoDtoWithDatePass() {
+    public static TodoDto getTodoForUser() {
         return TodoDto.builder()
                 .id(1L)
-                .title(null)
+                .title("teste 2 ")
                 .description("learning spring boot")
-                .deadline(passDate)
+                .deadline(LocalDate.now().plusDays(2))
                 .isFinished(false)
+                .user(UserUtils.getUserDto())
                 .build();
     }
 
     public static TodoUpdateDto getUpdateTodoDtoWithComplet() {
         return TodoUpdateDto.builder()
-                .id(1L)
+                .id(3L)
                 .title("Make something")
-                .description("describe the task")
-                .deadline(LocalDate.now().plusDays(2))
+                .description("Updated teste")
+                .deadline(LocalDate.now().plusDays(1))
                 .isFinished(true)
+                .userId(1L)
+                .build();
+    }
+
+    public static TodoUpdateDto getUpdateTodoDtoForTest() {
+        return TodoUpdateDto.builder()
+                .id(3L)
+                .title("redis")
+                .description("learning redis")
+                .deadline(LocalDate.now().plusDays(3))
+                .isFinished(false)
+                .userId(1L)
                 .build();
     }
 
@@ -137,6 +162,36 @@ public class TodoUtils {
                 .isFinished(false)
                 .build();
         return Arrays.asList(t1, t2);
+    }
+
+    public static TodoCreateDto getTodoCreateDto() {
+        return TodoCreateDto.builder()
+                .id(1L)
+                .title("Learning")
+                .description("learning spring boot")
+                .deadline(LocalDate.now())
+                .isFinished(false)
+                .idUser(2L)
+                .build();
+    }
+
+    public static TodoCreateDto getTodoCreateDtoInvalidInputs() {
+        return TodoCreateDto.builder()
+                .title("")
+                .description("")
+                .deadline(LocalDate.now().minusDays(1))
+                .isFinished(false)
+                .idUser(null)
+                .build();
+    }
+
+    public static List<TodoDto> getListTodoDtoByUserId() {
+        return Arrays.asList(getTodoForUser(), getTodoForUser());
+    }
+
+
+    public static List<Todo> getListTodoEntityByUserId() {
+        return Arrays.asList(getTodoEntity(), getTodoEntity());
     }
 
 }

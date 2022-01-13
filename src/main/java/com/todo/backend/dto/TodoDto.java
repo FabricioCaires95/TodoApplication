@@ -1,6 +1,9 @@
 package com.todo.backend.dto;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,8 +36,12 @@ public class TodoDto implements Serializable {
 
   @FutureOrPresent
   @JsonFormat(pattern = "dd/MM/yyyy")
+  @JsonSerialize(using = LocalDateSerializer.class)
   @ApiModelProperty(example = "25/09/2021")
   private LocalDate deadline;
 
   private Boolean isFinished;
+
+  @JsonBackReference
+  private UserDto user;
 }

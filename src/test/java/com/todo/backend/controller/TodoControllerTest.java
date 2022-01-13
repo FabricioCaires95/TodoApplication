@@ -20,13 +20,15 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import static com.todo.backend.utils.TodoUtils.getFinishListTasks;
+import static com.todo.backend.utils.TodoUtils.getListTodoDtoByUserId;
+import static com.todo.backend.utils.TodoUtils.getTodoCreateDto;
+import static com.todo.backend.utils.TodoUtils.getTodoCreateDtoInvalidInputs;
 import static com.todo.backend.utils.TodoUtils.getTodoDto;
-import static com.todo.backend.utils.TodoUtils.getTodoDtoWithDatePass;
 import static com.todo.backend.utils.TodoUtils.getUpdateTodoDtoWithComplet;
 import static com.todo.backend.utils.TodoUtils.getUpdateTodoDtoWithInvalidArguments;
 import static com.todo.backend.utils.TodoUtils.returnDefaultPageable;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.anyBoolean;
@@ -83,22 +85,12 @@ public class TodoControllerTest extends AbstractTestNGSpringContextTests {
   }
 
   @Test
-  @DisplayName("Find all tasks without pagination or sort")
-  public void returnAllTodosSuccessful() throws Exception {
-    when(todoService.findAll()).thenReturn(getFinishListTasks());
-    mvc.perform(get("/todo/todos"))
-            .andExpect(status().isOk());
-
-    verify(todoService, times(1)).findAll();
-  }
-
-  @Test
   @DisplayName("create new TodoDto successful")
   public void createNewTodoSuccessful() throws Exception {
     mvc.perform(post(
                     "/todo/create")
                     .contentType(APPLICATION_JSON)
-                    .content(mapper.writeValueAsString(getTodoDto())))
+                    .content(mapper.writeValueAsString(getTodoCreateDto())))
                     .andExpect(status().isCreated());
   }
 
@@ -108,12 +100,14 @@ public class TodoControllerTest extends AbstractTestNGSpringContextTests {
     mvc.perform(post(
                     "/todo/create")
                     .contentType(APPLICATION_JSON)
-                    .content(mapper.writeValueAsString(getTodoDtoWithDatePass())))
+                    .content(mapper.writeValueAsString(getTodoCreateDtoInvalidInputs())))
             .andExpect(status().isBadRequest())
             .andExpect(result -> assertTrue(result.getResolvedException() instanceof MethodArgumentNotValidException))
             .andExpect(jsonPath("$.message").value("Validation Error"))
             .andExpect(jsonPath("$.errors.['deadline']").value("must be a date in the present or in the future"))
-            .andExpect(jsonPath("$.errors.['title']").value("title is required"));
+            .andExpect(jsonPath("$.errors.['title']").value("title is required"))
+            .andExpect(jsonPath("$.errors.['description']").value("description is required"))
+            .andExpect(jsonPath("$.errors.['idUser']").value("User id is required"));
   }
 
   @Test
@@ -137,7 +131,9 @@ public class TodoControllerTest extends AbstractTestNGSpringContextTests {
             .andExpect(jsonPath("$.errors['title']").value("title is required"))
             .andExpect(jsonPath("$.errors['description']").value("description is required"))
             .andExpect(jsonPath("$.errors['deadline']").value("must be a date in the present or in the future"))
+            .andExpect(jsonPath("$.errors['userId']").value("User id is Required"))
             .andExpect(status().isBadRequest());
+    verify(todoService, times(0)).update(any());
   }
 
   @Test
@@ -152,9 +148,9 @@ public class TodoControllerTest extends AbstractTestNGSpringContextTests {
   @Test
   @DisplayName("find tasks finished by default parameters")
   public void getTaskFinishedWithDefaultParametersSuccessful() throws Exception {
-    when(todoService.findAllByDynamicParameters(anyInt(), anyInt(), anyBoolean())).thenReturn(returnDefaultPageable());
+    when(todoService.findAllByDynamicParameters(anyInt(), anyInt(), anyBoolean(), anyLong())).thenReturn(returnDefaultPageable());
     mvc.perform(get(
-                    "/todo/all"))
+                    "/todo/all?userId=1"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.size").value(2))
             .andExpect(jsonPath("$.content[0].id").value(1L))
@@ -162,17 +158,26 @@ public class TodoControllerTest extends AbstractTestNGSpringContextTests {
             .andExpect(jsonPath("$.content[1].id").value(2L))
             .andExpect(jsonPath("$.content[1].isFinished").value(false));
 
-    verify(todoService, times(1)).findAllByDynamicParameters(anyInt(), anyInt(), anyBoolean());
+    verify(todoService, times(1)).findAllByDynamicParameters(anyInt(), anyInt(), anyBoolean(), anyLong());
   }
 
   @Test
   @DisplayName("Passing specified parameters on request")
   public void shouldPassSpecifiedArguments() throws Exception {
     mvc.perform(get(
-                    "/todo/all?page=2&size=5&isFinished=true"))
+                    "/todo/all?userId=1&page=2&size=5&isFinished=true"))
             .andExpect(status().isOk());
-    verify(todoService, times(1)).findAllByDynamicParameters(2, 5, true);
+    verify(todoService, times(1)).findAllByDynamicParameters(2, 5, true, 1L);
   }
 
+
+  @Test
+  public void getTodosByUserIdSuccess() throws Exception {
+    when(todoService.getTodosByUserId(anyLong())).thenReturn(getListTodoDtoByUserId());
+    mvc.perform(get(
+            "/todo/todosByUserId/{id}", 1L
+    )).andExpect(status().isOk());
+    verify(todoService, times(1)).getTodosByUserId(anyLong());
+  }
 
 }

@@ -1,5 +1,6 @@
 package com.todo.backend.controller;
 
+import com.todo.backend.dto.TodoCreateDto;
 import com.todo.backend.dto.TodoDto;
 import com.todo.backend.dto.TodoUpdateDto;
 import com.todo.backend.service.TodoService;
@@ -38,22 +39,23 @@ public class TodoController {
 
   @GetMapping("/all")
   public ResponseEntity<Page<TodoDto>> findAllTasksPageable(
+          @RequestParam(value = "userId") Long userId,
           @RequestParam(value = "page", defaultValue = "0") Integer page,
           @RequestParam(value = "size", defaultValue = "3") Integer size,
           @RequestParam(value = "isFinished", defaultValue = "false") Boolean isFinished
   ) {
-    return ResponseEntity.ok(todoService.findAllByDynamicParameters(page, size, isFinished));
+    return ResponseEntity.ok(todoService.findAllByDynamicParameters(page, size, isFinished, userId));
   }
 
-  @GetMapping(value = "/todos", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<List<TodoDto>> findAll() {
-    return ResponseEntity.ok(todoService.findAll());
+  @GetMapping(value = "/todosByUserId/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<List<TodoDto>> findAll(@PathVariable Long id) {
+    return ResponseEntity.ok(todoService.getTodosByUserId(id));
   }
 
   @PostMapping("/create")
   public ResponseEntity<TodoDto> createTodo(
-          @RequestBody @Valid TodoDto todoDto) {
-    todoService.createTodo(todoDto);
+          @RequestBody @Valid TodoCreateDto todoDto) {
+    todoService.createTodoForUser(todoDto);
     URI uri = ServletUriComponentsBuilder
             .fromCurrentRequest().path("/{id}")
             .buildAndExpand(todoDto.getId()).toUri();
